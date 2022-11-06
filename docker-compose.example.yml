@@ -3,6 +3,7 @@ version: '3.9'
 services:
   db:
     image: postgres:14
+    container_name: inventory_db
     restart: always
     environment:
       POSTGRES_USER: prisma
