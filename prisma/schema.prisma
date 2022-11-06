@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Collection {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  createdAt  DateTime  @default(now())
+  archivedAt DateTime?
+
+  @@index([name])
+  @@index([archivedAt])
+}
+
+model Area {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+  slug String @unique @db.VarChar(255)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archivedAt DateTime?
+
+  spots Spot[]
+
+  @@index([name])
+  @@index([slug])
+  @@index([archivedAt])
+}
+
+model Spot {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+  slug String @unique @db.VarChar(255)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archivedAt DateTime?
+
+  areaId Int
+  area   Area    @relation(fields: [areaId], references: [id])
+  things Thing[]
+
+  @@index([name])
+  @@index([slug])
+  @@index([areaId])
+  @@index([archivedAt])
+}
+
+model Thing {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @default("")
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archivedAt DateTime?
+
+  spotId Int
+  spot   Spot @relation(fields: [spotId], references: [id])
+
+  thingLabels ThingLabel[]
+
+  @@index([name])
+  @@index([spotId])
+  @@index([archivedAt])
+}
+
+model Label {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @default("")
+  color       String @default("#000")
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  archivedAt DateTime?
+
+  thingLabels ThingLabel[]
+
+  @@index([name])
+  @@index([archivedAt])
+}
+
+model ThingLabel {
+  id      Int @id @default(autoincrement())
+  thingId Int
+  labelId Int
+
+  label Label @relation(fields: [labelId], references: [id])
+  thing Thing @relation(fields: [thingId], references: [id])
+
+  @@index([thingId, labelId])
+}

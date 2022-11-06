@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# Runs initial setup tasks, like ensuring the correct folders are in place,
+# and that example files have been copied.
+
+set -e
+
+ok() {
+  echo " \033[0;32mok:\033[0m $@"
+}
+
+ensure_env() {
+  if [ ! -f .env ]; then
+    cp .env.example .env
+    ok "copied .env.example -> .env -- remember to update it!"
+  fi
+}
+
+ensure_data_dir() {
+  if [ ! -d ./data ]; then
+    mkdir -p data/pg
+    ok "created data/ directory"
+  fi
+}
+
+ensure_docker_compose() {
+  if [ ! -f docker-compose.yml ]; then
+    cp docker-compose.example.yml docker-compose.yml
+    ok "copied docker-compose.example.yml -> docker-compose.yml"
+  fi
+}
+
+ensure_project_deps() {
+  yarn
+}
+
+# run everything!
+ensure_data_dir
+ensure_docker_compose
+ensure_env
+ensure_project_deps
