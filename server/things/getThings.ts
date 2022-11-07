@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { publicProcedure } from '@server/trpc';
 import prisma from '@server/prisma';
-import { ID, Pagination } from '@lib/schema';
+import { ID, Pagination, UID } from '@lib/schema';
 import { ThingWithLabelIds } from './schema';
 
 export const getThings = publicProcedure
@@ -14,7 +14,7 @@ export const getThings = publicProcedure
   .output(
     z.object({
       things: z.array(ThingWithLabelIds),
-      nextCursor: ID.optional(),
+      nextCursor: UID.optional(),
     })
   )
   .query(async ({ input }) => {
@@ -26,7 +26,7 @@ export const getThings = publicProcedure
       take: input.limit + 1,
       cursor: input.cursor
         ? {
-            id: input.cursor,
+            uid: input.cursor,
           }
         : undefined,
       include: {
@@ -53,6 +53,6 @@ export const getThings = publicProcedure
 
     return {
       things: things.length > input.limit ? things.slice(0, -1) : things,
-      nextCursor: things.length > 0 ? things[things.length - 1].id : undefined,
+      nextCursor: things.length > 0 ? things[things.length - 1].uid : undefined,
     };
   });

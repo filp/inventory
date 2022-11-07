@@ -11,9 +11,9 @@ datasource db {
 }
 
 model Collection {
-  id          Int    @id @default(autoincrement())
-  name        String @db.VarChar(255)
-  slug        String @unique @db.VarChar(255)
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(255)
+
   description String @default("")
 
   createdAt  DateTime  @default(now())
@@ -29,7 +29,6 @@ model Collection {
 model Area {
   id          Int    @id @default(autoincrement())
   name        String @db.VarChar(255)
-  slug        String @unique @db.VarChar(255)
   description String @default("")
 
   createdAt  DateTime  @default(now())
@@ -39,14 +38,12 @@ model Area {
   spots Spot[]
 
   @@index([name])
-  @@index([slug])
   @@index([archivedAt])
 }
 
 model Spot {
   id          Int    @id @default(autoincrement())
   name        String @db.VarChar(255)
-  slug        String @unique @db.VarChar(255)
   description String @default("")
 
   createdAt  DateTime  @default(now())
@@ -62,7 +59,6 @@ model Spot {
   subSpots     Spot[] @relation(name: "subSpots")
 
   @@index([name])
-  @@index([slug])
   @@index([areaId])
   @@index([archivedAt])
   @@index([parentSpotId])
@@ -70,6 +66,7 @@ model Spot {
 
 model Thing {
   id          Int    @id @default(autoincrement())
+  uid         String @unique @db.VarChar(32)
   name        String @db.VarChar(255)
   description String @default("")
   quantity    Int    @default(1)

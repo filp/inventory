@@ -1,11 +1,10 @@
 import { z } from 'zod';
-import { BaseResourceEntity, ID } from '@lib/schema';
+import { BaseResourceEntity, ID, UID } from '@lib/schema';
 
-export const Thing = BaseResourceEntity.omit({
-  slug: true,
-}).extend({
+export const Thing = BaseResourceEntity.extend({
   spotId: ID,
   collectionId: ID,
+  uid: UID,
   quantity: z.number().min(0).default(1),
 });
 

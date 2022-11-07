@@ -1,15 +1,11 @@
 import { z } from 'zod';
 
 export const ID = z.number();
+export const UID = z.string().max(64).min(6);
 export const Timestamp = z.date();
 
 export const Name = z.string().min(3).max(255);
 export const Description = z.string().default('');
-export const Slug = z
-  .string()
-  .max(255)
-  .min(3)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
 export const BaseEntity = z.object({
   id: ID,
@@ -21,10 +17,9 @@ export const BaseEntity = z.object({
 export const BaseResourceEntity = BaseEntity.extend({
   name: Name,
   description: Description,
-  slug: Slug,
 });
 
 export const Pagination = z.object({
-  cursor: ID.optional(),
+  cursor: UID.optional(),
   limit: z.number().max(500).default(150),
 });

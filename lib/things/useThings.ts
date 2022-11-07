@@ -8,7 +8,7 @@ export const useThings = ({
 }: {
   collectionId: number;
   archived?: boolean;
-  cursor?: number;
+  cursor?: string;
   limit?: number;
 }) => {
   const { data, ...query } = trpc.getThings.useQuery(
