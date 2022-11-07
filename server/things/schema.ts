@@ -6,7 +6,20 @@ export const Thing = BaseResourceEntity.omit({
 }).extend({
   spotId: ID,
   collectionId: ID,
-  labelIds: z.array(ID),
 });
 
 export type Thing = z.infer<typeof Thing>;
+
+export const ThingWithLabelIds = Thing.extend({ labelIds: z.array(ID) });
+export type ThingWithLabelIds = z.infer<typeof ThingWithLabelIds>;
+
+export const ThingWithLabels = Thing.extend({
+  labels: z.array(
+    z.object({
+      id: ID,
+      name: z.string(),
+      description: z.string().nullable().optional(),
+      color: z.string(),
+    })
+  ),
+});

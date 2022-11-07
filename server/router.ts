@@ -4,6 +4,7 @@ import { getAreas } from './areas/getAreas';
 import { createCollection } from './collections/createCollection';
 import { getCollections } from './collections/getCollections';
 import { getThings } from './things/getThings';
+import { getThing } from './things/getThing';
 import { router } from './trpc';
 
 export const appRouter = router({
@@ -18,6 +19,7 @@ export const appRouter = router({
 
   // Things:
   getThings,
+  getThing,
 });
 
 export type AppRouter = typeof appRouter;

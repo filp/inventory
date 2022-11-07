@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { publicProcedure } from '@server/trpc';
 import prisma from '@server/prisma';
 import { ID, Pagination } from '@lib/schema';
-import { Thing } from './schema';
+import { ThingWithLabelIds } from './schema';
 
 export const getThings = publicProcedure
   .input(
@@ -12,12 +12,12 @@ export const getThings = publicProcedure
   )
   .output(
     z.object({
-      things: z.array(Thing),
+      things: z.array(ThingWithLabelIds),
       nextCursor: ID.optional(),
     })
   )
   .query(async ({ input }) => {
-    const thingsWithLabels = await prisma.thing.findMany({
+    const thingsWithLabelIds = await prisma.thing.findMany({
       where: {
         archivedAt: input.archived ? { not: null } : null,
       },
@@ -40,7 +40,7 @@ export const getThings = publicProcedure
       },
     });
 
-    const things = thingsWithLabels.map((thing) => {
+    const things = thingsWithLabelIds.map((thing) => {
       const { thingLabels, ...thingProps } = thing;
 
       return {
