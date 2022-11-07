@@ -45,7 +45,7 @@ const columns = [
   }),
 ];
 
-const DetailsPane = ({
+const ThingDetailsPane = ({
   isOpen,
   onClose,
 }: {
@@ -105,7 +105,7 @@ const CollectionPage = () => {
   });
 
   return (
-    <div className="px-4 md:w-screen">
+    <div className="px-6 md:w-screen">
       <div className="py-4">
         <h2 className="text-1xl font-heading">
           Things in the{' '}
@@ -160,7 +160,7 @@ const CollectionPage = () => {
           </table>
         </div>
 
-        <DetailsPane
+        <ThingDetailsPane
           isOpen={detailsPaneOpen}
           onClose={() => setDetailsPaneOpen(false)}
         />
