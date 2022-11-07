@@ -8,7 +8,8 @@ export const getThings = publicProcedure
   .input(
     Pagination.extend({
       archived: z.boolean().default(false),
-    }).default({})
+      collectionId: ID,
+    })
   )
   .output(
     z.object({
@@ -20,6 +21,7 @@ export const getThings = publicProcedure
     const thingsWithLabelIds = await prisma.thing.findMany({
       where: {
         archivedAt: input.archived ? { not: null } : null,
+        collectionId: input.collectionId,
       },
       take: input.limit + 1,
       cursor: input.cursor
@@ -50,7 +52,7 @@ export const getThings = publicProcedure
     });
 
     return {
-      things: things.slice(0, -1),
+      things: things.length > input.limit ? things.slice(0, -1) : things,
       nextCursor: things.length > 0 ? things[things.length - 1].id : undefined,
     };
   });

@@ -72,6 +72,7 @@ model Thing {
   id          Int    @id @default(autoincrement())
   name        String @db.VarChar(255)
   description String @default("")
+  quantity    Int    @default(1)
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

@@ -4,12 +4,19 @@ export const useThings = ({
   archived,
   cursor,
   limit,
-}: { archived?: boolean; cursor?: number; limit?: number } = {}) => {
+  collectionId,
+}: {
+  collectionId: number;
+  archived?: boolean;
+  cursor?: number;
+  limit?: number;
+}) => {
   const { data, ...query } = trpc.getThings.useQuery(
     {
       archived,
       cursor,
       limit,
+      collectionId,
     },
     {
       keepPreviousData: true,

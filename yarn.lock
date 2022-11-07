@@ -254,6 +254,18 @@
     "@tanstack/query-core" "4.14.5"
     use-sync-external-store "^1.2.0"
 
+"@tanstack/react-table@^8.5.22":
+  version "8.5.22"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.5.22.tgz#8a5250ac6437ca7c16e683cde65a065c0f573e24"
+  integrity sha512-01XaxQTxcI+w7g+i/YRblxdAikM9G7L1S7LwqaiD/gkKmNUs+g2BXw4GfIcuzzE75Q5t0BXlyqM7MyxxBuvQXA==
+  dependencies:
+    "@tanstack/table-core" "8.5.22"
+
+"@tanstack/table-core@8.5.22":
+  version "8.5.22"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.5.22.tgz#ba381db5f7f47558aba6e75cc94ee32a691defeb"
+  integrity sha512-D3wDbVXl3Bi5PdGfle6DijhLzZxrvMyZsE1dSHH0xBsqEbu7Pkxn5EEd6CA9tGsCgXIEP1s4Yfy1cZ9xnMz1sQ==
+
 "@trpc/client@^10.0.0-rc.5":
   version "10.0.0-rc.5"
   resolved "https://registry.yarnpkg.com/@trpc/client/-/client-10.0.0-rc.5.tgz#df304278927fce3805e080f491af507744a14d64"
@@ -737,6 +749,11 @@ damerau-levenshtein@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/damerau-levenshtein/-/damerau-levenshtein-1.0.8.tgz#b43d286ccbd36bc5b2f7ed41caf2d0aba1f8a6e7"
   integrity sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==
+
+date-fns@^2.29.3:
+  version "2.29.3"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
+  integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
 
 debug@^2.6.9:
   version "2.6.9"

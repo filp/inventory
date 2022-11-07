@@ -6,6 +6,7 @@ export const Thing = BaseResourceEntity.omit({
 }).extend({
   spotId: ID,
   collectionId: ID,
+  quantity: z.number().min(0).default(1),
 });
 
 export type Thing = z.infer<typeof Thing>;
