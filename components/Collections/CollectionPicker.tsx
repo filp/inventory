@@ -6,14 +6,25 @@ import type { Collection } from '@server/collections/schema';
 export const CollectionPicker = ({
   currentCollectionId,
 }: {
-  currentCollectionId: Collection['id'];
+  currentCollectionId?: Collection['id'];
 }) => {
-  const { collections } = useCollections();
+  const hasCurrentCollectionId = typeof currentCollectionId !== 'undefined';
+  const { collections } = useCollections({
+    enabled: hasCurrentCollectionId,
+  });
+
+  // If we have no active collection, don't render the component at all to
+  // avoid confusing the user -- they're probably going through the wizard,
+  // or managing something outside the collection scope.
+  if (!hasCurrentCollectionId) {
+    return null;
+  }
 
   const currentCollection = collections
     ? collections.find((collection) => collection.id === currentCollectionId)
     : undefined;
 
+  // Do not include the currently selected collection on the list:
   const filteredCollections = collections
     ? collections.filter(
         (collection) => collection.id !== currentCollection?.id
@@ -26,7 +37,7 @@ export const CollectionPicker = ({
         disabled={filteredCollections.length === 0}
         className="focus-ring rounded border border-faded px-3 py-1 text-sm shadow-sm"
       >
-        {currentCollection?.name || 'No collection selected'}
+        {currentCollection?.name}
       </Popover.Button>
 
       <Popover.Panel className="absolute z-10 mt-1 flex flex-col gap-1 border border-faded bg-white p-2 text-sm shadow-sm">

@@ -12,7 +12,7 @@ const InventoryApp: AppType = ({ Component, pageProps }) => (
     <div className="container">
       <header className="flex flex-row items-center gap-4 border-b border-faded p-4">
         <div className="font-heading text-lg text-black">inventory</div>
-        <CollectionPicker currentCollectionId={1} />
+        <CollectionPicker />
       </header>
 
       <div className="p-4">
