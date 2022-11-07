@@ -37,7 +37,7 @@ const columns = [
   }),
   columnHelper.accessor('uid', {
     cell: (info) => (
-      <span className="border-faded text-xs text-gray-400 md:rounded md:border md:px-1">
+      <span className="break-all border-faded text-xs text-gray-400 md:rounded md:border md:px-1">
         {info.getValue()}
       </span>
     ),
@@ -120,7 +120,7 @@ const CollectionPage = () => {
       </div>
       <div className="md:flex md:flex-row">
         <div className="md:flex-1">
-          <table className="table-auto border-separate rounded border border-faded shadow-sm md:w-full md:border-spacing-2">
+          <table className="w-full table-auto border-separate rounded border border-faded shadow-sm  md:border-spacing-2">
             <thead className="font-heading text-xs text-gray-700">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
