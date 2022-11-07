@@ -10,7 +10,7 @@ const InventoryApp: AppType = ({ Component, pageProps }) => (
       <title>Inventory</title>
     </Head>
     <div className="container w-screen">
-      <header className="flex w-screen flex-row items-center gap-4 border-b border-faded p-4">
+      <header className="flex h-[70px] w-screen flex-row items-center gap-4 border-b border-faded p-4">
         <div className="font-heading text-lg text-black">inventory</div>
         <CollectionPicker />
       </header>

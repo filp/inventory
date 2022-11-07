@@ -1,3 +1,4 @@
+import QRCode from 'react-qr-code';
 import {
   createColumnHelper,
   flexRender,
@@ -8,6 +9,7 @@ import { formatDistance } from 'date-fns';
 import type { ThingWithLabelIds } from '@server/things/schema';
 import { useThings } from '@lib/things/useThings';
 import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
+import { ChevronLeft } from '@components/Icons/ChevronLeft';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 const columns = [
@@ -33,7 +35,7 @@ const columns = [
   }),
   columnHelper.accessor('uid', {
     cell: (info) => (
-      <span className="rounded border border-faded px-1 text-xs text-gray-400">
+      <span className="break-all border-faded text-xs text-gray-400 md:break-normal md:rounded md:border md:px-1">
         {info.getValue()}
       </span>
     ),
@@ -56,7 +58,7 @@ const CollectionPage = () => {
   });
 
   return (
-    <div className="w-screen px-4">
+    <div className="px-4 md:w-screen">
       <div className="py-4">
         <h2 className="text-1xl font-heading">
           Things in the{' '}
@@ -69,9 +71,9 @@ const CollectionPage = () => {
           </p>
         )}
       </div>
-      <div className="flex flex-row">
-        <div className="flex-1">
-          <table className="w-full table-auto border-separate border-spacing-2 rounded border border-faded shadow-sm">
+      <div className="md:flex md:flex-row">
+        <div className="md:flex-1">
+          <table className="table-auto border-separate rounded border border-faded shadow-sm md:w-full md:border-spacing-2">
             <thead className="font-heading text-xs text-gray-700">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
@@ -95,7 +97,10 @@ const CollectionPage = () => {
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-2 py-1 align-middle">
+                    <td
+                      key={cell.id}
+                      className="px-1 py-1 align-middle md:px-2"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -108,12 +113,22 @@ const CollectionPage = () => {
           </table>
         </div>
 
-        <div className="mx-4 min-w-[30%] flex-shrink-0 rounded  bg-black p-4 text-white shadow-sm">
-          <div className="flex flex-col gap-1">
+        <div className="fixed top-0 right-0 h-screen min-w-[85%] bg-black text-white shadow-sm md:relative md:mx-4 md:h-auto  md:min-w-[30%] md:flex-shrink-0 md:rounded">
+          <div className="flex h-[70px] flex-row items-center gap-2 border-b border-gray-600 px-4 md:hidden">
+            <ChevronLeft /> Return to list
+          </div>
+          <div className="flex flex-col gap-1 p-4">
             <h3 className="pt-1 font-heading text-lg">iPhone 13 Pro Max</h3>
             <p className="text-sm text-faded">
               Filipe&apos;s iPhone 13 Pro Max
             </p>
+            <div className="mt-4 flex flex-row justify-center rounded bg-white p-4">
+              <QRCode
+                value={'mhvXdrZT4jP5T8vBxuvm75'}
+                xlinkTitle="iPhone 13 Pro Max"
+                size={128}
+              />
+            </div>
           </div>
         </div>
       </div>
