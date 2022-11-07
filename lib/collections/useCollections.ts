@@ -8,7 +8,9 @@ export const useCollections = ({
     {
       archived,
     },
-    { enabled }
+    {
+      enabled: typeof enabled === 'undefined' ? true : enabled,
+    }
   );
 
   return {

@@ -7,6 +7,7 @@ import {
 import { formatDistance } from 'date-fns';
 import type { ThingWithLabelIds } from '@server/things/schema';
 import { useThings } from '@lib/things/useThings';
+import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 const columns = [
@@ -41,8 +42,11 @@ const columns = [
 ];
 
 const CollectionPage = () => {
+  const { currentCollection, hasCurrentCollection } = useCollectionFromPath();
+
   const { things } = useThings({
-    collectionId: 6,
+    collectionId: currentCollection?.id || -1,
+    enabled: hasCurrentCollection,
   });
 
   const table = useReactTable({
@@ -52,48 +56,67 @@ const CollectionPage = () => {
   });
 
   return (
-    <div className="flex w-screen flex-row px-4">
-      <div className="flex-1">
-        <div>
-          <h1 className="py-4 font-heading text-2xl">
-            Things in this collection
-          </h1>
-        </div>
-        <table className="table-auto border-separate border-spacing-2 rounded border border-faded shadow-sm">
-          <thead className="font-heading text-xs text-gray-700">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="border-b border-faded px-2 py-1 text-left"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-2 py-1 align-middle">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="w-screen px-4">
+      <div className="py-4">
+        <h2 className="text-1xl font-heading">
+          Things in the{' '}
+          <span className="text-indigo-700">{currentCollection?.name}</span>{' '}
+          collection.
+        </h2>
+        {currentCollection?.description && (
+          <p className="text-sm text-gray-500">
+            {currentCollection?.description}
+          </p>
+        )}
       </div>
+      <div className="flex flex-row">
+        <div className="flex-1">
+          <table className="w-full table-auto border-separate border-spacing-2 rounded border border-faded shadow-sm">
+            <thead className="font-heading text-xs text-gray-700">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="border-b border-faded px-2 py-1 text-left"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-2 py-1 align-middle">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="max-w-[20%]">Hello</div>
+        <div className="mx-4 min-w-[30%] flex-shrink-0 rounded  bg-black p-4 text-white shadow-sm">
+          <div className="flex flex-col gap-1">
+            <h3 className="pt-1 font-heading text-lg">iPhone 13 Pro Max</h3>
+            <p className="text-sm text-faded">
+              Filipe&apos;s iPhone 13 Pro Max
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

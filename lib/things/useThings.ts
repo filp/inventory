@@ -5,11 +5,13 @@ export const useThings = ({
   cursor,
   limit,
   collectionId,
+  enabled,
 }: {
   collectionId: number;
   archived?: boolean;
   cursor?: string;
   limit?: number;
+  enabled?: boolean;
 }) => {
   const { data, ...query } = trpc.getThings.useQuery(
     {
@@ -20,6 +22,7 @@ export const useThings = ({
     },
     {
       keepPreviousData: true,
+      enabled: typeof enabled === 'undefined' ? true : enabled,
     }
   );
 
