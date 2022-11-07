@@ -16,7 +16,9 @@ import { ChevronLeft } from '@components/Icons/ChevronLeft';
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 const columns = [
   columnHelper.accessor('name', {
-    cell: (info) => info.getValue(),
+    cell: (info) => (
+      <span title={info.row.original.uid}>{info.getValue()}</span>
+    ),
     header: 'Name',
   }),
   columnHelper.accessor('quantity', {
@@ -24,7 +26,7 @@ const columns = [
     header: 'Qty',
   }),
   columnHelper.accessor('description', {
-    cell: (info) => info.getValue() || '',
+    cell: (info) => <p className="text-sm">{info.getValue() || ''}</p>,
     header: 'Description',
   }),
   columnHelper.accessor('createdAt', {
@@ -34,14 +36,6 @@ const columns = [
       </span>
     ),
     header: 'Created',
-  }),
-  columnHelper.accessor('uid', {
-    cell: (info) => (
-      <span className="break-all border-faded text-xs text-gray-400 md:rounded md:border md:px-1">
-        {info.getValue()}
-      </span>
-    ),
-    header: 'UID',
   }),
 ];
 
@@ -146,7 +140,7 @@ const CollectionPage = () => {
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="px-1 py-1 align-middle md:px-2"
+                      className="overflow-hidden px-1 py-1 align-middle md:px-2"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
