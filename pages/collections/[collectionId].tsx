@@ -1,4 +1,6 @@
+import React, { useState } from 'react';
 import QRCode from 'react-qr-code';
+import cn from 'classnames';
 import {
   createColumnHelper,
   flexRender,
@@ -35,7 +37,7 @@ const columns = [
   }),
   columnHelper.accessor('uid', {
     cell: (info) => (
-      <span className="break-all border-faded text-xs text-gray-400 md:break-normal md:rounded md:border md:px-1">
+      <span className="border-faded text-xs text-gray-400 md:rounded md:border md:px-1">
         {info.getValue()}
       </span>
     ),
@@ -43,8 +45,53 @@ const columns = [
   }),
 ];
 
+const DetailsPane = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const onClosePane = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    onClose();
+  };
+
+  const panelClass = cn(
+    'fixed top-0 right-0 h-screen min-w-[85%] bg-black text-white shadow-sm md:relative md:mx-4 md:h-auto md:min-w-[30%] md:flex-shrink-0 md:rounded',
+    { 'hidden md:block': !isOpen }
+  );
+
+  return (
+    <div className={panelClass}>
+      <div
+        className="flex h-[70px] cursor-pointer flex-row items-center gap-2 border-b border-gray-600 px-4 md:hidden"
+        onClick={onClosePane}
+      >
+        <ChevronLeft /> Return to list
+      </div>
+
+      <div className="flex flex-col gap-1 p-4">
+        <h3 className="pt-1 font-heading text-lg">iPhone 13 Pro Max</h3>
+        <p className="text-sm text-faded">Filipe&apos;s iPhone 13 Pro Max</p>
+
+        <div className="mt-4 flex flex-row justify-center rounded bg-white p-4">
+          <QRCode
+            value={'mhvXdrZT4jP5T8vBxuvm75'}
+            xlinkTitle="iPhone 13 Pro Max"
+            size={128}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const CollectionPage = () => {
   const { currentCollection, hasCurrentCollection } = useCollectionFromPath();
+  const [detailsPaneOpen, setDetailsPaneOpen] = useState(true);
 
   const { things } = useThings({
     collectionId: currentCollection?.id || -1,
@@ -113,24 +160,10 @@ const CollectionPage = () => {
           </table>
         </div>
 
-        <div className="fixed top-0 right-0 h-screen min-w-[85%] bg-black text-white shadow-sm md:relative md:mx-4 md:h-auto  md:min-w-[30%] md:flex-shrink-0 md:rounded">
-          <div className="flex h-[70px] flex-row items-center gap-2 border-b border-gray-600 px-4 md:hidden">
-            <ChevronLeft /> Return to list
-          </div>
-          <div className="flex flex-col gap-1 p-4">
-            <h3 className="pt-1 font-heading text-lg">iPhone 13 Pro Max</h3>
-            <p className="text-sm text-faded">
-              Filipe&apos;s iPhone 13 Pro Max
-            </p>
-            <div className="mt-4 flex flex-row justify-center rounded bg-white p-4">
-              <QRCode
-                value={'mhvXdrZT4jP5T8vBxuvm75'}
-                xlinkTitle="iPhone 13 Pro Max"
-                size={128}
-              />
-            </div>
-          </div>
-        </div>
+        <DetailsPane
+          isOpen={detailsPaneOpen}
+          onClose={() => setDetailsPaneOpen(false)}
+        />
       </div>
     </div>
   );
