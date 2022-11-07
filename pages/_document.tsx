@@ -10,7 +10,7 @@ const Document = () => (
         crossOrigin="anonymous"
       />
       <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&amp;family=Montserrat:wght@500&amp;display=swap"
         rel="stylesheet"
       ></link>
     </Head>

@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  a {
+    @apply focus-ring text-indigo-800 hover:text-indigo-500;
+  }
+}
+
+@layer utilities {
+  .focus-base {
+    @apply rounded outline-none ring-indigo-800 ring-offset-1 focus-visible:ring-2;
+  }
+
+  .focus-ring {
+    @apply focus-visible:focus-base;
+  }
+}

@@ -11,19 +11,26 @@ datasource db {
 }
 
 model Collection {
-  id         Int       @id @default(autoincrement())
-  name       String    @db.VarChar(255)
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  slug        String @unique @db.VarChar(255)
+  description String @default("")
+
   createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   archivedAt DateTime?
+
+  things Thing[]
 
   @@index([name])
   @@index([archivedAt])
 }
 
 model Area {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(255)
-  slug String @unique @db.VarChar(255)
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  slug        String @unique @db.VarChar(255)
+  description String @default("")
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -37,9 +44,10 @@ model Area {
 }
 
 model Spot {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(255)
-  slug String @unique @db.VarChar(255)
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  slug        String @unique @db.VarChar(255)
+  description String @default("")
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -49,10 +57,15 @@ model Spot {
   area   Area    @relation(fields: [areaId], references: [id])
   things Thing[]
 
+  parentSpotId Int?
+  parentSpot   Spot?  @relation(fields: [parentSpotId], references: [id], name: "subSpots")
+  subSpots     Spot[] @relation(name: "subSpots")
+
   @@index([name])
   @@index([slug])
   @@index([areaId])
   @@index([archivedAt])
+  @@index([parentSpotId])
 }
 
 model Thing {
@@ -64,6 +77,9 @@ model Thing {
   updatedAt  DateTime  @updatedAt
   archivedAt DateTime?
 
+  collectionId Int
+  collection   Collection @relation(fields: [collectionId], references: [id])
+
   spotId Int
   spot   Spot @relation(fields: [spotId], references: [id])
 
@@ -71,6 +87,7 @@ model Thing {
 
   @@index([name])
   @@index([spotId])
+  @@index([collectionId])
   @@index([archivedAt])
 }
 
