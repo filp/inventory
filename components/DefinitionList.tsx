@@ -1,5 +1,6 @@
 import React from 'react';
 import cn from 'classnames';
+import { EyeSlash } from './Icons/EyeSlash';
 
 type DefinitionListProps = {
   header?: string;
@@ -27,14 +28,13 @@ export const DefinitionList = ({
 );
 
 export const DefinitionRow = ({
-  idx,
   label,
   children,
 }: React.PropsWithChildren<{ label: string; idx?: number }>) => (
   <div
     className={cn(
       'px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6',
-      idx && idx % 2 ? 'bg-gray-50' : 'bg-transparent'
+      'odd:bg-transparent even:bg-gray-50'
     )}
   >
     <dt className="text-sm font-medium text-gray-500">{label}</dt>
@@ -44,6 +44,7 @@ export const DefinitionRow = ({
   </div>
 );
 
+const validTypes = ['string', 'number'];
 export const QuickDefinitionList = ({
   items,
   pruneFalsy,
@@ -55,12 +56,18 @@ export const QuickDefinitionList = ({
   <DefinitionList {...definitionListProps}>
     {Object.entries(items)
       .filter((p) => !pruneFalsy || !!p[1])
-      .map((pair, i) => {
+      .map((pair) => {
         const [key, value] = pair;
 
         return (
-          <DefinitionRow key={key} label={key} idx={i}>
-            {value as string}
+          <DefinitionRow key={key} label={key}>
+            {validTypes.includes(typeof value) ? (
+              (value as string)
+            ) : (
+              <span title="Cannot display value" className="text-faded">
+                <EyeSlash />
+              </span>
+            )}
           </DefinitionRow>
         );
       })}

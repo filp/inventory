@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import QRCode from 'react-qr-code';
 import cn from 'classnames';
 import {
@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { formatDistance } from 'date-fns';
+import { formatRelative } from 'date-fns';
 import type { ThingWithLabelIds } from '@server/things/schema';
 import { useThings } from '@lib/things/useThings';
 import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
@@ -15,27 +15,11 @@ import { ChevronLeft } from '@components/Icons/ChevronLeft';
 import { useThing } from '@lib/things/useThing';
 import { Loader } from '@components/Loader';
 import { ThingUID } from '@components/Things/ThingUID';
-import { QuickDefinitionList } from '@components/DefinitionList';
+import { DefinitionList, DefinitionRow } from '@components/DefinitionList';
+import { useLabels } from '@lib/labels/useAreas';
+import { LabelList } from '@components/Label';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
-const columns = [
-  columnHelper.accessor('quantity', {
-    cell: (info) => info.getValue(),
-    header: 'Qty',
-  }),
-  columnHelper.accessor('name', {
-    cell: (info) => (
-      <span title={info.row.original.uid}>{info.getValue()}</span>
-    ),
-    header: 'Name',
-  }),
-  columnHelper.accessor('createdAt', {
-    cell: (info) => (
-      <>{formatDistance(new Date(info.getValue()), Date.now())} ago</>
-    ),
-    header: 'Created',
-  }),
-];
 
 const ThingDetailsPane = ({
   isOpen,
@@ -58,7 +42,7 @@ const ThingDetailsPane = ({
   };
 
   const panelClass = cn(
-    'fixed top-0 right-0 h-screen w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0',
+    'fixed rounded-none md:border-b md:rounded-b-lg md:pb-4 top-0 right-0 h-screen w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0',
     { 'hidden md:block': !isOpen }
   );
 
@@ -82,7 +66,7 @@ const ThingDetailsPane = ({
       <div>
         <div className="p-4">
           <div className="flex flex-row justify-end"></div>
-          <h3 className="pt-1 font-heading text-lg">{thing.name}</h3>
+          <h3 className="pt-1 font-heading text-xl">{thing.name}</h3>
           <p className="text-sm text-gray-600">{thing.description}</p>
 
           <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
@@ -91,7 +75,17 @@ const ThingDetailsPane = ({
           </div>
         </div>
 
-        <QuickDefinitionList items={thing} pruneFalsy />
+        <DefinitionList>
+          <DefinitionRow label="Quantity">
+            <span className="text-faded">x</span> {thing.quantity}
+          </DefinitionRow>
+          <DefinitionRow label="Labels">
+            <LabelList labels={thing.labels} />
+          </DefinitionRow>
+          <DefinitionRow label="Created">
+            {formatRelative(new Date(thing.createdAt), Date.now())}
+          </DefinitionRow>
+        </DefinitionList>
       </div>
     </div>
   );
@@ -99,7 +93,28 @@ const ThingDetailsPane = ({
 
 const CollectionPage = () => {
   const { currentCollection, hasCurrentCollection } = useCollectionFromPath();
+  const { withLabelIds } = useLabels();
   const [detailsPaneOpen, setDetailsPaneOpen] = useState(true);
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('quantity', {
+        cell: (info) => info.getValue(),
+        header: 'Qty',
+      }),
+      columnHelper.accessor('name', {
+        cell: (info) => (
+          <span title={info.row.original.uid}>{info.getValue()}</span>
+        ),
+        header: 'Name',
+      }),
+      columnHelper.accessor('labelIds', {
+        cell: (info) => <LabelList labels={withLabelIds(info.getValue())} />,
+        header: 'Labels',
+      }),
+    ],
+    [withLabelIds]
+  );
 
   const { things } = useThings({
     collectionId: currentCollection?.id || -1,

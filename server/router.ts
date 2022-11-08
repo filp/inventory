@@ -6,6 +6,7 @@ import { getCollections } from './collections/getCollections';
 import { getThings } from './things/getThings';
 import { getThing } from './things/getThing';
 import { router } from './trpc';
+import { getLabels } from './labels/getLabels';
 
 export const appRouter = router({
   // Collections:
@@ -20,6 +21,9 @@ export const appRouter = router({
   // Things:
   getThings,
   getThing,
+
+  // Labels
+  getLabels,
 });
 
 export type AppRouter = typeof appRouter;
