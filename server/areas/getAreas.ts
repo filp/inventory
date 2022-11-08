@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { publicProcedure } from '@server/trpc';
 import prisma from '@server/prisma';
-import { Area } from './schema';
+import { AreaWithSpots } from './schema';
 
 export const getAreas = publicProcedure
   .input(
@@ -11,11 +11,14 @@ export const getAreas = publicProcedure
       })
       .default({})
   )
-  .output(z.array(Area))
+  .output(z.array(AreaWithSpots))
   .query(async ({ input }) =>
     prisma.area.findMany({
       where: {
         archivedAt: input.archived ? { not: null } : null,
+      },
+      include: {
+        spots: true,
       },
     })
   );

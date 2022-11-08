@@ -10,6 +10,7 @@ export const useCollections = ({
     },
     {
       enabled: typeof enabled === 'undefined' ? true : enabled,
+      refetchOnWindowFocus: false,
     }
   );
 

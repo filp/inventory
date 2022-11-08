@@ -16,8 +16,10 @@ import { useThing } from '@lib/things/useThing';
 import { Loader } from '@components/Loader';
 import { ThingUID } from '@components/Things/ThingUID';
 import { DefinitionList, DefinitionRow } from '@components/DefinitionList';
-import { useLabels } from '@lib/labels/useAreas';
+import { useLabels } from '@lib/labels/useLabels';
 import { LabelList } from '@components/Label';
+import { useAreas } from '@lib/areas/useAreas';
+import { ArrowLongRight } from '@components/Icons/ArrowLongRight';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 
@@ -33,6 +35,9 @@ const ThingDetailsPane = ({
   const { thing } = useThing({
     uid: thingUid,
   });
+
+  const { getSpot } = useAreas();
+  const location = thing && getSpot(thing.spotId);
 
   const onClosePane = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -81,6 +86,19 @@ const ThingDetailsPane = ({
           </DefinitionRow>
           <DefinitionRow label="Labels">
             <LabelList labels={thing.labels} />
+          </DefinitionRow>
+          <DefinitionRow label="Where">
+            {location ? (
+              <div className="flex flex-row gap-2">
+                <span className="truncate">{location.area.name}</span>
+                <span className="text-indigo-700">
+                  <ArrowLongRight />
+                </span>
+                <span className="truncate">{location.spot.name}</span>
+              </div>
+            ) : (
+              <Loader message="Loading location..." />
+            )}
           </DefinitionRow>
           <DefinitionRow label="Created">
             {formatRelative(new Date(thing.createdAt), Date.now())}

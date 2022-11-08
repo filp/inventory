@@ -1,7 +1,9 @@
 import { trpc } from '@lib/trpc';
 
 export const useLabels = () => {
-  const { data, ...query } = trpc.getLabels.useQuery();
+  const { data, ...query } = trpc.getLabels.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   return {
     ...query,

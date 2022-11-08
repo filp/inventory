@@ -54,14 +54,9 @@ model Spot {
   area   Area    @relation(fields: [areaId], references: [id])
   things Thing[]
 
-  parentSpotId Int?
-  parentSpot   Spot?  @relation(fields: [parentSpotId], references: [id], name: "subSpots")
-  subSpots     Spot[] @relation(name: "subSpots")
-
   @@index([name])
   @@index([areaId])
   @@index([archivedAt])
-  @@index([parentSpotId])
 }
 
 model Thing {

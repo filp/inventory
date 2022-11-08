@@ -1,5 +1,4 @@
 import { createArea } from './areas/createArea';
-import { getArea } from './areas/getArea';
 import { getAreas } from './areas/getAreas';
 import { createCollection } from './collections/createCollection';
 import { getCollections } from './collections/getCollections';
@@ -14,7 +13,6 @@ export const appRouter = router({
   createCollection,
 
   // Areas:
-  getArea,
   getAreas,
   createArea,
 
