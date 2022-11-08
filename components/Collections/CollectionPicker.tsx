@@ -23,15 +23,20 @@ export const CollectionPicker = () => {
       </Popover.Button>
 
       <Popover.Panel className="absolute z-10 mt-1 flex flex-col gap-1 border border-faded bg-white p-2 text-sm shadow-sm">
-        {otherCollections.map((collection) => (
-          <Link
-            className="block p-2 text-black"
-            href={routes.collection({ id: collection.id })}
-            key={collection.id}
-          >
-            {collection.name}
-          </Link>
-        ))}
+        {({ close }) => (
+          <>
+            {otherCollections.map((collection) => (
+              <Link
+                className="block p-2 text-black"
+                href={routes.collection({ id: collection.id })}
+                key={collection.id}
+                onClick={() => close()}
+              >
+                {collection.name}
+              </Link>
+            ))}
+          </>
+        )}
       </Popover.Panel>
     </Popover>
   );

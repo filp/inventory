@@ -16,4 +16,8 @@
   .focus-ring {
     @apply focus-visible:focus-base;
   }
+
+  .body-padding {
+    @apply px-2 md:px-6;
+  }
 }
