@@ -58,7 +58,7 @@ const ThingDetailsPane = ({
   };
 
   const panelClass = cn(
-    'fixed top-0 right-0 h-screen max-w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0',
+    'fixed top-0 right-0 h-screen w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0',
     { 'hidden md:block': !isOpen }
   );
 
