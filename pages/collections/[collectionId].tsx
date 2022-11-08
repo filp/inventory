@@ -12,6 +12,10 @@ import type { ThingWithLabelIds } from '@server/things/schema';
 import { useThings } from '@lib/things/useThings';
 import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
 import { ChevronLeft } from '@components/Icons/ChevronLeft';
+import { useThing } from '@lib/things/useThing';
+import { Loader } from '@components/Loader';
+import { ThingUID } from '@components/Things/ThingUID';
+import { QuickDefinitionList } from '@components/DefinitionList';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 const columns = [
@@ -25,7 +29,6 @@ const columns = [
     ),
     header: 'Name',
   }),
-
   columnHelper.accessor('createdAt', {
     cell: (info) => (
       <>{formatDistance(new Date(info.getValue()), Date.now())} ago</>
@@ -37,10 +40,16 @@ const columns = [
 const ThingDetailsPane = ({
   isOpen,
   onClose,
+  thingUid,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  thingUid: string;
 }) => {
+  const { thing } = useThing({
+    uid: thingUid,
+  });
+
   const onClosePane = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -49,9 +58,17 @@ const ThingDetailsPane = ({
   };
 
   const panelClass = cn(
-    'fixed top-0 right-0 h-screen min-w-[85%] bg-white border-l md:border shadow-sm md:relative md:mx-4 md:h-auto md:min-w-[30%] md:flex-shrink-0 md:rounded',
+    'fixed top-0 right-0 h-screen max-w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0',
     { 'hidden md:block': !isOpen }
   );
+
+  if (!thing) {
+    return (
+      <div className={cn(panelClass, 'p-4')}>
+        <Loader message="Loading thing.." />
+      </div>
+    );
+  }
 
   return (
     <div className={panelClass}>
@@ -62,17 +79,19 @@ const ThingDetailsPane = ({
         <ChevronLeft /> Return to list
       </div>
 
-      <div className="flex flex-col gap-1 p-4">
-        <h3 className="pt-1 font-heading text-lg">iPhone 13 Pro Max</h3>
-        <p className="text-sm text-gray-600">Filipe&apos;s iPhone 13 Pro Max</p>
+      <div>
+        <div className="p-4">
+          <div className="flex flex-row justify-end"></div>
+          <h3 className="pt-1 font-heading text-lg">{thing.name}</h3>
+          <p className="text-sm text-gray-600">{thing.description}</p>
 
-        <div className="mt-4 flex flex-row justify-center rounded bg-white p-4">
-          <QRCode
-            value={'mhvXdrZT4jP5T8vBxuvm75'}
-            xlinkTitle="iPhone 13 Pro Max"
-            size={128}
-          />
+          <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
+            <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
+            <ThingUID>{thing.uid}</ThingUID>
+          </div>
         </div>
+
+        <QuickDefinitionList items={thing} pruneFalsy />
       </div>
     </div>
   );
@@ -95,20 +114,16 @@ const CollectionPage = () => {
 
   return (
     <div>
-      <div className="py-4">
-        <h2 className="text-1xl font-heading">
-          Things in the{' '}
-          <span className="text-indigo-700">{currentCollection?.name}</span>{' '}
-          collection.
-        </h2>
-        {currentCollection?.description && (
-          <p className="text-sm text-gray-500">
-            {currentCollection?.description}
-          </p>
-        )}
-      </div>
       <div className="md:flex md:flex-row">
-        <div className="overflow-y-scroll md:flex-1">
+        <div className="md:flex-1">
+          <div className="py-4">
+            <h2 className="font-heading text-2xl">{currentCollection?.name}</h2>
+            {currentCollection?.description && (
+              <p className="text-sm text-gray-500">
+                {currentCollection?.description}
+              </p>
+            )}
+          </div>
           <table className="w-full table-auto rounded border border-faded shadow-sm md:border-separate md:border-spacing-2">
             <thead className="font-heading text-xs text-gray-700">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -152,6 +167,7 @@ const CollectionPage = () => {
         <ThingDetailsPane
           isOpen={detailsPaneOpen}
           onClose={() => setDetailsPaneOpen(false)}
+          thingUid="xxvXdrZRrjP5T8vBxuvm75"
         />
       </div>
     </div>

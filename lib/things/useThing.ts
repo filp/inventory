@@ -1,9 +1,9 @@
 import { trpc } from '@lib/trpc';
 import type { ThingWithLabelIds } from '@server/things/schema';
 
-export const useThing = ({ id }: { id: ThingWithLabelIds['id'] }) => {
+export const useThing = ({ uid }: { uid: ThingWithLabelIds['uid'] }) => {
   const { data, ...query } = trpc.getThing.useQuery({
-    id: id,
+    uid: uid,
   });
 
   return {

@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { BaseResourceEntity, ID, UID } from '@lib/schema';
 
-export const Thing = BaseResourceEntity.extend({
+export const Thing = BaseResourceEntity.omit({ id: true }).extend({
+  uid: UID,
   spotId: ID,
   collectionId: ID,
-  uid: UID,
   quantity: z.number().min(0).default(1),
 });
 

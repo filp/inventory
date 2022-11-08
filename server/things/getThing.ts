@@ -7,14 +7,14 @@ import { ThingWithLabels } from './schema';
 export const getThing = publicProcedure
   .input(
     z.object({
-      id: ThingWithLabels.shape.id,
+      uid: ThingWithLabels.shape.uid,
     })
   )
   .output(ThingWithLabels)
   .query(async ({ input }) => {
     const thing = await prisma.thing.findFirst({
       where: {
-        id: input.id,
+        uid: input.uid,
       },
       include: {
         thingLabels: {
