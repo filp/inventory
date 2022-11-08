@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import QRCode from 'react-qr-code';
 import cn from 'classnames';
 import {
@@ -23,6 +23,8 @@ import { ArrowLongRight } from '@components/Icons/ArrowLongRight';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 
+const paneScrollClass = 'pane-open';
+
 const ThingDetailsPane = ({
   isOpen,
   onClose,
@@ -39,6 +41,16 @@ const ThingDetailsPane = ({
   const { getSpot } = useAreas();
   const location = thing && getSpot(thing.spotId);
 
+  useEffect(() => {
+    const body = document.getElementsByTagName('body')[0];
+
+    if (isOpen) {
+      body.classList.toggle(paneScrollClass, isOpen);
+    }
+
+    return () => body.classList.remove(paneScrollClass);
+  }, [isOpen]);
+
   const onClosePane = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -47,7 +59,7 @@ const ThingDetailsPane = ({
   };
 
   const panelClass = cn(
-    'fixed rounded-none md:border-b md:rounded-b-lg md:pb-4 top-0 right-0 h-screen w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0',
+    'fixed rounded-none md:border-b md:rounded-b-lg md:pb-4 top-0 right-0 h-screen w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0 overflow-y-scroll',
     { 'hidden md:block': !isOpen }
   );
 
@@ -89,19 +101,24 @@ const ThingDetailsPane = ({
           </DefinitionRow>
           <DefinitionRow label="Where">
             {location ? (
-              <div className="flex flex-row gap-2">
-                <span className="truncate">{location.area.name}</span>
-                <span className="text-indigo-700">
-                  <ArrowLongRight />
-                </span>
-                <span className="truncate">{location.spot.name}</span>
-              </div>
+              <ul>
+                <li>{location.area.name}</li>
+                <li className="flex flex-row items-center gap-2">
+                  <span className="text-indigo-500">
+                    <ArrowLongRight />
+                  </span>{' '}
+                  {location.spot.name}
+                </li>
+              </ul>
             ) : (
               <Loader message="Loading location..." />
             )}
           </DefinitionRow>
           <DefinitionRow label="Created">
             {formatRelative(new Date(thing.createdAt), Date.now())}
+          </DefinitionRow>
+          <DefinitionRow label="Last updated">
+            {formatRelative(new Date(thing.updatedAt), Date.now())}
           </DefinitionRow>
         </DefinitionList>
       </div>
