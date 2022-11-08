@@ -3,6 +3,7 @@ import Head from 'next/head';
 import type { AppType } from 'next/app';
 import { trpc } from '@lib/trpc';
 import { CollectionPicker } from '@components/Collections/CollectionPicker';
+import { Toaster } from '@components/Toaster';
 
 const InventoryApp: AppType = ({ Component, pageProps }) => (
   <>
@@ -17,6 +18,10 @@ const InventoryApp: AppType = ({ Component, pageProps }) => (
 
       <div className="body-padding w-screen">
         <Component {...pageProps} />
+      </div>
+
+      <div className="fixed bottom-0 z-50 w-screen">
+        <Toaster />
       </div>
     </div>
   </>

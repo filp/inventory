@@ -1,5 +1,6 @@
 import React from 'react';
 import copytoClipboard from 'copy-to-clipboard';
+import toast from 'react-hot-toast';
 
 export const ThingUID = ({ children }: { children: React.ReactNode }) => {
   const onClick = (event: React.MouseEvent) => {
@@ -7,6 +8,7 @@ export const ThingUID = ({ children }: { children: React.ReactNode }) => {
     event.stopPropagation();
 
     copytoClipboard(children as string);
+    toast('Copied Thing UID to clipboard!');
   };
 
   return (
