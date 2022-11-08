@@ -20,6 +20,7 @@ import { useLabels } from '@lib/labels/useLabels';
 import { LabelList } from '@components/Label';
 import { useAreas } from '@lib/areas/useAreas';
 import { ArrowLongRight } from '@components/Icons/ArrowLongRight';
+import { ChatBubble } from '@components/Icons/ChatBubble';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 
@@ -32,7 +33,7 @@ const ThingDetailsPane = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  thingUid: string;
+  thingUid?: string;
 }) => {
   const { thing } = useThing({
     uid: thingUid,
@@ -62,6 +63,17 @@ const ThingDetailsPane = ({
     'fixed rounded-none md:border-b md:rounded-b-lg md:pb-4 top-0 right-0 h-screen w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0 overflow-y-scroll',
     { 'hidden md:block': !isOpen }
   );
+
+  if (!thingUid) {
+    return (
+      <div className={cn(panelClass, 'p-4')}>
+        <p className="my-20 flex flex-col items-center gap-4 text-center text-sm text-gray-600">
+          <ChatBubble />
+          Select a thing on the left to see its details
+        </p>
+      </div>
+    );
+  }
 
   if (!thing) {
     return (
@@ -129,7 +141,14 @@ const ThingDetailsPane = ({
 const CollectionPage = () => {
   const { currentCollection, hasCurrentCollection } = useCollectionFromPath();
   const { withLabelIds } = useLabels();
-  const [detailsPaneOpen, setDetailsPaneOpen] = useState(true);
+  const [selectedThingUid, setSelectedThingUid] = useState<string>();
+
+  // Ensure we're closing the details panel when changing collections:
+  useEffect(() => {
+    if (currentCollection) {
+      setSelectedThingUid(undefined);
+    }
+  }, [currentCollection]);
 
   const columns = useMemo(
     () => [
@@ -139,7 +158,12 @@ const CollectionPage = () => {
       }),
       columnHelper.accessor('name', {
         cell: (info) => (
-          <span title={info.row.original.uid}>{info.getValue()}</span>
+          <a
+            className="cursor-pointer text-black"
+            onClick={() => setSelectedThingUid(info.row.original.uid)}
+          >
+            {info.getValue()}
+          </a>
         ),
         header: 'Name',
       }),
@@ -215,9 +239,9 @@ const CollectionPage = () => {
         </div>
 
         <ThingDetailsPane
-          isOpen={detailsPaneOpen}
-          onClose={() => setDetailsPaneOpen(false)}
-          thingUid="xxvXdrZRrjP5T8vBxuvm75"
+          isOpen={!!selectedThingUid}
+          onClose={() => setSelectedThingUid(undefined)}
+          thingUid={selectedThingUid}
         />
       </div>
     </div>
