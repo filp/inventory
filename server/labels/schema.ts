@@ -4,7 +4,7 @@ import { ID } from '@lib/schema';
 export const Label = z.object({
   id: ID,
   name: z.string(),
-  description: z.string().nullable().optional(),
+  description: z.string().optional().default(''),
   color: z.string(),
 });
 

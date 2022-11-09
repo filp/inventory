@@ -108,5 +108,5 @@ model ThingLabel {
   label Label @relation(fields: [labelId], references: [id])
   thing Thing @relation(fields: [thingId], references: [id])
 
-  @@index([thingId, labelId])
+  @@unique([thingId, labelId])
 }

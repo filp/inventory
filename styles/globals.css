@@ -20,8 +20,8 @@
   .body-padding {
     @apply px-2 md:px-6;
   }
-}
 
-.pane-open {
-  overflow: hidden;
+  .pane-open {
+    @apply overflow-hidden md:overflow-auto;
+  }
 }
