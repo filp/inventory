@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { type ReactNode, useEffect, useMemo, useState } from 'react';
 import QRCode from 'react-qr-code';
+import Link from 'next/link';
 import cn from 'classnames';
 import {
   createColumnHelper,
@@ -21,19 +22,29 @@ import { LabelList } from '@components/Label';
 import { useAreas } from '@lib/areas/useAreas';
 import { ArrowLongRight } from '@components/Icons/ArrowLongRight';
 import { ChatBubble } from '@components/Icons/ChatBubble';
+import { routes } from '@lib/routes';
+import { useThingUidFromPath } from '@lib/things/useThingUidFromPath';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 
 const paneScrollClass = 'pane-open';
 
+const Quantity = ({ children: quantity }: { children: ReactNode }) => (
+  <>
+    <span className="hidden text-faded md:inline">x</span> {quantity}
+  </>
+);
+
 const ThingDetailsPane = ({
   isOpen,
   onClose,
   thingUid,
+  currentCollectionId,
 }: {
   isOpen: boolean;
   onClose: () => void;
   thingUid?: string;
+  currentCollectionId?: number;
 }) => {
   const { thing } = useThing({
     uid: thingUid,
@@ -60,8 +71,9 @@ const ThingDetailsPane = ({
   };
 
   const panelClass = cn(
-    'fixed rounded-none md:border-b md:rounded-b-lg md:pb-4 top-0 right-0 h-screen w-[85%] bg-white border-l  md:border-r shadow-sm md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0 overflow-y-scroll',
-    { 'hidden md:block': !isOpen }
+    'rounded-none md:border-b md:rounded-b-lg md:pb-4 bg-white border-l  md:border-r shadow-sm',
+    'fixed  top-0 right-0 h-screen w-[85%] md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0 overflow-y-scroll',
+    { 'invisible md:visible': !isOpen }
   );
 
   if (!thingUid) {
@@ -84,95 +96,112 @@ const ThingDetailsPane = ({
   }
 
   return (
-    <div className={panelClass}>
+    <>
       <div
-        className="flex h-[70px] cursor-pointer flex-row items-center gap-2 border-b border-faded px-4 md:hidden"
+        className="fixed top-0 left-0 h-screen w-screen md:hidden"
         onClick={onClosePane}
-      >
-        <ChevronLeft /> Return to list
-      </div>
-
-      <div>
-        <div className="p-4">
-          <div className="flex flex-row justify-end"></div>
-          <h3 className="pt-1 font-heading text-xl">{thing.name}</h3>
-          <p className="text-sm text-gray-600">{thing.description}</p>
-
-          <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
-            <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
-            <ThingUID>{thing.uid}</ThingUID>
-          </div>
+      ></div>
+      <div className={panelClass} aria-modal={isOpen}>
+        <div
+          className="flex h-[70px] cursor-pointer flex-row items-center gap-2 border-b border-faded px-4 md:sr-only"
+          onClick={onClosePane}
+        >
+          <ChevronLeft /> Return to list
         </div>
 
-        <DefinitionList>
-          <DefinitionRow label="Quantity">
-            <span className="text-faded">x</span> {thing.quantity}
-          </DefinitionRow>
-          <DefinitionRow label="Labels">
-            <LabelList labels={thing.labels} />
-          </DefinitionRow>
-          <DefinitionRow label="Where">
-            {location ? (
-              <ul>
-                <li>{location.area.name}</li>
-                <li className="flex flex-row items-center gap-2">
-                  <span className="text-indigo-500">
-                    <ArrowLongRight />
-                  </span>{' '}
-                  {location.spot.name}
-                </li>
-              </ul>
-            ) : (
-              <Loader message="Loading location..." />
-            )}
-          </DefinitionRow>
-          <DefinitionRow label="Created">
-            {formatRelative(new Date(thing.createdAt), Date.now())}
-          </DefinitionRow>
-          <DefinitionRow label="Last updated">
-            {formatRelative(new Date(thing.updatedAt), Date.now())}
-          </DefinitionRow>
-        </DefinitionList>
+        <div>
+          {currentCollectionId && currentCollectionId !== thing.collectionId ? (
+            <div className="bg-black p-4 text-sm">
+              <Link
+                href={routes.collectionThing({
+                  collectionId: thing.collectionId,
+                  thingUid: thing.uid,
+                })}
+                className="text-white"
+              >
+                Go to this thing&apos;s collection
+              </Link>
+            </div>
+          ) : null}
+          <div className="p-4">
+            <div className="flex flex-row justify-end"></div>
+            <h3 className="pt-1 font-heading text-xl">{thing.name}</h3>
+            <p className="text-sm text-gray-600">{thing.description}</p>
+
+            <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
+              <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
+              <ThingUID>{thing.uid}</ThingUID>
+            </div>
+          </div>
+
+          <DefinitionList>
+            <DefinitionRow label="Quantity">
+              <Quantity>{thing.quantity}</Quantity>
+            </DefinitionRow>
+            <DefinitionRow label="Labels">
+              <LabelList labels={thing.labels} />
+            </DefinitionRow>
+            <DefinitionRow label="Where">
+              {location ? (
+                <ul>
+                  <li>{location.area.name}</li>
+                  <li className="flex flex-row items-center gap-2">
+                    <span className="text-indigo-500">
+                      <ArrowLongRight />
+                    </span>{' '}
+                    {location.spot.name}
+                  </li>
+                </ul>
+              ) : (
+                <Loader message="Loading location..." />
+              )}
+            </DefinitionRow>
+            <DefinitionRow label="Created">
+              {formatRelative(new Date(thing.createdAt), Date.now())}
+            </DefinitionRow>
+            <DefinitionRow label="Last updated">
+              {formatRelative(new Date(thing.updatedAt), Date.now())}
+            </DefinitionRow>
+          </DefinitionList>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
 const CollectionPage = () => {
   const { currentCollection, hasCurrentCollection } = useCollectionFromPath();
+  const thingUidFromPath = useThingUidFromPath();
   const { withLabelIds } = useLabels();
-  const [selectedThingUid, setSelectedThingUid] = useState<string>();
-
-  // Ensure we're closing the details panel when changing collections:
-  useEffect(() => {
-    if (currentCollection) {
-      setSelectedThingUid(undefined);
-    }
-  }, [currentCollection]);
+  const [selectedThingUid, setSelectedThingUid] = useState(thingUidFromPath);
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('quantity', {
-        cell: (info) => info.getValue(),
-        header: 'Qty',
-      }),
       columnHelper.accessor('name', {
         cell: (info) => (
-          <a
+          <Link
+            href={routes.collectionThing({
+              collectionId: currentCollection!.id,
+              thingUid: info.row.original.uid,
+            })}
             className="cursor-pointer text-black"
             onClick={() => setSelectedThingUid(info.row.original.uid)}
           >
             {info.getValue()}
-          </a>
+          </Link>
         ),
         header: 'Name',
+      }),
+      columnHelper.accessor('quantity', {
+        cell: (info) => <Quantity>{info.getValue()}</Quantity>,
+        header: 'Qty',
       }),
       columnHelper.accessor('labelIds', {
         cell: (info) => <LabelList labels={withLabelIds(info.getValue())} />,
         header: 'Labels',
       }),
     ],
-    [withLabelIds]
+    [withLabelIds, currentCollection]
   );
 
   const { things } = useThings({
@@ -220,11 +249,14 @@ const CollectionPage = () => {
             </thead>
             <tbody>
               {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
+                <tr
+                  key={row.id}
+                  className="rounded odd:bg-gray-100 md:odd:bg-transparent"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="px-1 py-1 align-middle text-sm md:px-2 md:text-base"
+                      className="px-2 py-2 align-middle text-sm md:py-1 md:text-base"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -242,6 +274,7 @@ const CollectionPage = () => {
           isOpen={!!selectedThingUid}
           onClose={() => setSelectedThingUid(undefined)}
           thingUid={selectedThingUid}
+          currentCollectionId={currentCollection?.id}
         />
       </div>
     </div>

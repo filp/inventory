@@ -9,6 +9,7 @@ import {
   randBetweenDate,
   randProductAdjective,
   randCounty,
+  randBoolean,
 } from '@ngneat/falso';
 import prisma from '../server/prisma';
 import type { Area } from '../server/areas/schema';
@@ -96,7 +97,9 @@ const thingFactory = ({
   uid: randAlphaNumeric({ length: 32 }).join(''),
   name: randAccessory(),
   description: randomDescription(),
-  quantity: randNumber({ min: 1, max: 3000 }),
+
+  // Bias towards only having 1 of something:
+  quantity: randBoolean() ? 1 : randNumber({ min: 1, max: 100 }),
 
   ...randomTimeStamps(),
 });

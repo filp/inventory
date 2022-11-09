@@ -28,7 +28,7 @@ export const CollectionPicker = () => {
             {otherCollections.map((collection) => (
               <Link
                 className="block p-2 text-black"
-                href={routes.collection({ id: collection.id })}
+                href={routes.collection({ collectionId: collection.id })}
                 key={collection.id}
                 onClick={() => close()}
               >
