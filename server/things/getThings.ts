@@ -34,6 +34,9 @@ export const getThings = publicProcedure
     const thingsWithLabelIds = await prisma.thing.findMany({
       where,
       take,
+      orderBy: {
+        id: 'asc',
+      },
       cursor: input.cursor
         ? {
             uid: input.cursor,

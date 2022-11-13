@@ -181,31 +181,22 @@ const CollectionPage = () => {
   const { withLabelIds } = useLabels();
   const [selectedThingUid, setSelectedThingUid] = useState(thingUidFromPath);
 
-  useEffect(() => {
-    const query = {
-      ...router.query,
-      thingUid: selectedThingUid,
-    };
-
-    // `thingUi` may already be set previously, hence the round-about
-    // way of handling the property's presence:
-    if (!selectedThingUid) {
-      delete query.thingUid;
-    }
-
-    void router.replace(
-      {
-        pathname: router.pathname,
-        query,
-      },
-      undefined,
-      { shallow: true }
-    );
-  }, [setSelectedThingUid, selectedThingUid, router]);
-
   const isSelectedThing = (thing: Thing) => thing.uid === selectedThingUid;
   const onSelectThing = (thing?: Thing) => {
     setSelectedThingUid(thing?.uid);
+
+    if (!selectedThingUid) return;
+
+    void router.replace(
+      routes.collectionThing({
+        collectionId: currentCollection!.id,
+        thingUid: selectedThingUid,
+      }),
+      undefined,
+      {
+        shallow: true,
+      }
+    );
   };
 
   const { things, totalThings } = useThings({
