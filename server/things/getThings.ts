@@ -8,7 +8,7 @@ export const getThings = publicProcedure
   .input(
     z.object({
       cursor: UID.optional(),
-      limit: z.number().max(500).min(1).default(150),
+      limit: z.number().max(500).min(1).default(100),
       archived: z.boolean().default(false),
       collectionId: ID,
     })

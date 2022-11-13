@@ -233,7 +233,7 @@ const CollectionPage = () => {
           )}
         </div>
         <div className="mb-1 rounded border border-faded bg-gray-50 px-2 py-1 text-sm">
-          Showing {totalThings} things in this collection
+          Showing {things?.length || 0}/{totalThings} things in this collection
         </div>
         <table className="w-full table-auto rounded border border-faded shadow-sm md:border-separate md:border-spacing-2">
           <thead className="font-heading text-xs text-gray-700 md:text-lg md:text-black">
