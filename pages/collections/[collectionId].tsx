@@ -73,7 +73,7 @@ const ThingDetailsPane = ({
 
   const panelClass = cn(
     'md:pb-4 bg-white',
-    'fixed h-screen top-0 right-0 md:relative overflow-y-scroll md:h-auto max-w-[85%] md:max-w-[100%]',
+    'fixed h-screen top-0 right-0 md:relative overflow-y-scroll md:h-auto w-[85%] md:w-full',
     { 'invisible md:visible': !isOpen }
   );
 
