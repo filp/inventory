@@ -1,4 +1,5 @@
 import React, { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 import QRCode from 'react-qr-code';
 import Link from 'next/link';
 import cn from 'classnames';
@@ -9,7 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { formatRelative } from 'date-fns';
-import type { ThingWithLabelIds } from '@server/things/schema';
+import type { Thing, ThingWithLabelIds } from '@server/things/schema';
 import { useThings } from '@lib/things/useThings';
 import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
 import { ChevronLeft } from '@components/Icons/ChevronLeft';
@@ -151,7 +152,7 @@ const ThingDetailsPane = ({
         className="fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-20 backdrop-blur-sm md:hidden"
         onClick={onClosePane}
       ></div>
-      <div className={panelClass} aria-modal={isOpen}>
+      <div className={panelClass}>
         <div
           className="h-[70px] border-b border-faded leading-[70px] md:sr-only"
           onClick={onClosePane}
@@ -174,10 +175,38 @@ const ThingDetailsPane = ({
 };
 
 const CollectionPage = () => {
-  const { currentCollection, hasCurrentCollection } = useCollectionFromPath();
+  const router = useRouter();
   const thingUidFromPath = useThingUidFromPath();
+  const { currentCollection, hasCurrentCollection } = useCollectionFromPath();
   const { withLabelIds } = useLabels();
   const [selectedThingUid, setSelectedThingUid] = useState(thingUidFromPath);
+
+  useEffect(() => {
+    const query = {
+      ...router.query,
+      thingUid: selectedThingUid,
+    };
+
+    // `thingUi` may already be set previously, hence the round-about
+    // way of handling the property's presence:
+    if (!selectedThingUid) {
+      delete query.thingUid;
+    }
+
+    void router.replace(
+      {
+        pathname: router.pathname,
+        query,
+      },
+      undefined,
+      { shallow: true }
+    );
+  }, [setSelectedThingUid, selectedThingUid, router]);
+
+  const isSelectedThing = (thing: Thing) => thing.uid === selectedThingUid;
+  const onSelectThing = (thing?: Thing) => {
+    setSelectedThingUid(thing?.uid);
+  };
 
   const { things, totalThings } = useThings({
     collectionId: currentCollection?.id || -1,
@@ -187,20 +216,7 @@ const CollectionPage = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor('name', {
-        cell: (info) => (
-          <Link
-            href={routes.collectionThing({
-              collectionId: currentCollection!.id,
-              thingUid: info.row.original.uid,
-            })}
-            className="cursor-pointer text-black"
-            onClick={() => setSelectedThingUid(info.row.original.uid)}
-            replace
-            scroll={false}
-          >
-            {info.getValue()}
-          </Link>
-        ),
+        cell: (info) => info.getValue(),
         header: 'Name',
       }),
       columnHelper.accessor('quantity', {
@@ -212,7 +228,7 @@ const CollectionPage = () => {
         header: 'Labels',
       }),
     ],
-    [withLabelIds, currentCollection]
+    [withLabelIds]
   );
 
   const table = useReactTable({
@@ -235,14 +251,14 @@ const CollectionPage = () => {
         <div className="mb-1 rounded border border-faded bg-gray-50 px-2 py-1 text-sm">
           Showing {things?.length || 0}/{totalThings} things in this collection
         </div>
-        <table className="w-full table-auto rounded border border-faded shadow-sm md:border-separate md:border-spacing-2">
-          <thead className="font-heading text-xs text-gray-700 md:text-lg md:text-black">
+        <table className="w-full table-auto">
+          <thead className="text-gray-700 md:text-black">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="border-b border-faded px-2 py-1 text-left"
+                    className="border border-faded bg-gray-100 p-1 text-left text-sm font-normal"
                   >
                     {header.isPlaceholder
                       ? null
@@ -260,11 +276,14 @@ const CollectionPage = () => {
               <tr
                 key={row.id}
                 className="rounded odd:bg-gray-100 md:odd:bg-transparent"
+                onClick={() => onSelectThing(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="px-2 py-2 align-middle text-sm md:py-1 md:text-base"
+                    className={cn('overflow-hidden border border-faded p-1', {
+                      'bg-indigo-50': isSelectedThing(cell.row.original),
+                    })}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -277,7 +296,9 @@ const CollectionPage = () => {
 
       <ThingDetailsPane
         isOpen={!!selectedThingUid}
-        onClose={() => setSelectedThingUid(undefined)}
+        onClose={() => {
+          onSelectThing(undefined);
+        }}
         thingUid={selectedThingUid}
         currentCollectionId={currentCollection?.id}
       />
