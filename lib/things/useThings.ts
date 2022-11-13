@@ -29,6 +29,7 @@ export const useThings = ({
   return {
     ...query,
     things: data?.things,
+    totalThings: data?.results || 0,
     nextCursor: data?.nextCursor,
   };
 };

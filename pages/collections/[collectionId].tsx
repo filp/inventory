@@ -71,8 +71,8 @@ const ThingDetailsPane = ({
   };
 
   const panelClass = cn(
-    'rounded-none md:border-b md:rounded-b-lg md:pb-4 bg-white border-l  md:border-r shadow-sm',
-    'fixed  top-0 right-0 h-screen w-[85%] md:relative md:ml-4 md:h-auto md:w-[30%] md:min-w-[300px] md:flex-shrink-0 overflow-y-scroll',
+    'md:pb-4 bg-white',
+    'fixed h-screen top-0 right-0 md:relative overflow-y-scroll md:h-auto max-w-[85%] md:max-w-[100%]',
     { 'invisible md:visible': !isOpen }
   );
 
@@ -87,85 +87,89 @@ const ThingDetailsPane = ({
     );
   }
 
-  if (!thing) {
-    return (
-      <div className={cn(panelClass, 'p-4')}>
-        <Loader message="Loading thing.." />
+  const thingPanelContent = thing ? (
+    <div>
+      {currentCollectionId && currentCollectionId !== thing.collectionId ? (
+        <div className="bg-black p-4 text-sm">
+          <Link
+            href={routes.collectionThing({
+              collectionId: thing.collectionId,
+              thingUid: thing.uid,
+            })}
+            className="text-white"
+          >
+            Go to this thing&apos;s collection
+          </Link>
+        </div>
+      ) : null}
+      <div className="p-4">
+        <div className="flex flex-row justify-end"></div>
+        <h3 className="pt-1 font-heading text-xl">{thing.name}</h3>
+        <p className="text-sm text-gray-600">{thing.description}</p>
+
+        <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
+          <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
+          <ThingUID>{thing.uid}</ThingUID>
+        </div>
       </div>
-    );
-  }
+
+      <DefinitionList>
+        <DefinitionRow label="Quantity">
+          <Quantity>{thing.quantity}</Quantity>
+        </DefinitionRow>
+        <DefinitionRow label="Labels">
+          <LabelList labels={thing.labels} />
+        </DefinitionRow>
+        <DefinitionRow label="Where">
+          {location ? (
+            <ul>
+              <li>{location.area.name}</li>
+              <li className="flex flex-row items-center gap-2">
+                <span className="text-indigo-500">
+                  <ArrowLongRight />
+                </span>{' '}
+                {location.spot.name}
+              </li>
+            </ul>
+          ) : (
+            <Loader message="Loading location..." />
+          )}
+        </DefinitionRow>
+        <DefinitionRow label="Created">
+          {formatRelative(new Date(thing.createdAt), Date.now())}
+        </DefinitionRow>
+        <DefinitionRow label="Last updated">
+          {formatRelative(new Date(thing.updatedAt), Date.now())}
+        </DefinitionRow>
+      </DefinitionList>
+    </div>
+  ) : null;
 
   return (
-    <>
+    <div className="box">
       <div
-        className="fixed top-0 left-0 h-screen w-screen md:hidden"
+        className="fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-20 backdrop-blur-sm md:hidden"
         onClick={onClosePane}
       ></div>
       <div className={panelClass} aria-modal={isOpen}>
         <div
-          className="flex h-[70px] cursor-pointer flex-row items-center gap-2 border-b border-faded px-4 md:sr-only"
+          className="h-[70px] border-b border-faded leading-[70px] md:sr-only"
           onClick={onClosePane}
         >
-          <ChevronLeft /> Return to list
-        </div>
-
-        <div>
-          {currentCollectionId && currentCollectionId !== thing.collectionId ? (
-            <div className="bg-black p-4 text-sm">
-              <Link
-                href={routes.collectionThing({
-                  collectionId: thing.collectionId,
-                  thingUid: thing.uid,
-                })}
-                className="text-white"
-              >
-                Go to this thing&apos;s collection
-              </Link>
-            </div>
-          ) : null}
-          <div className="p-4">
-            <div className="flex flex-row justify-end"></div>
-            <h3 className="pt-1 font-heading text-xl">{thing.name}</h3>
-            <p className="text-sm text-gray-600">{thing.description}</p>
-
-            <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
-              <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
-              <ThingUID>{thing.uid}</ThingUID>
-            </div>
+          <div className="flex cursor-pointer flex-row items-center gap-2 px-4">
+            <ChevronLeft /> Return to list
           </div>
-
-          <DefinitionList>
-            <DefinitionRow label="Quantity">
-              <Quantity>{thing.quantity}</Quantity>
-            </DefinitionRow>
-            <DefinitionRow label="Labels">
-              <LabelList labels={thing.labels} />
-            </DefinitionRow>
-            <DefinitionRow label="Where">
-              {location ? (
-                <ul>
-                  <li>{location.area.name}</li>
-                  <li className="flex flex-row items-center gap-2">
-                    <span className="text-indigo-500">
-                      <ArrowLongRight />
-                    </span>{' '}
-                    {location.spot.name}
-                  </li>
-                </ul>
-              ) : (
-                <Loader message="Loading location..." />
-              )}
-            </DefinitionRow>
-            <DefinitionRow label="Created">
-              {formatRelative(new Date(thing.createdAt), Date.now())}
-            </DefinitionRow>
-            <DefinitionRow label="Last updated">
-              {formatRelative(new Date(thing.updatedAt), Date.now())}
-            </DefinitionRow>
-          </DefinitionList>
         </div>
+
+        {thing ? (
+          thingPanelContent
+        ) : (
+          <div className="p-2">
+            <Loader message="Loading thing.." />
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
@@ -174,6 +178,11 @@ const CollectionPage = () => {
   const thingUidFromPath = useThingUidFromPath();
   const { withLabelIds } = useLabels();
   const [selectedThingUid, setSelectedThingUid] = useState(thingUidFromPath);
+
+  const { things, totalThings } = useThings({
+    collectionId: currentCollection?.id || -1,
+    enabled: hasCurrentCollection,
+  });
 
   const columns = useMemo(
     () => [
@@ -186,6 +195,8 @@ const CollectionPage = () => {
             })}
             className="cursor-pointer text-black"
             onClick={() => setSelectedThingUid(info.row.original.uid)}
+            replace
+            scroll={false}
           >
             {info.getValue()}
           </Link>
@@ -204,11 +215,6 @@ const CollectionPage = () => {
     [withLabelIds, currentCollection]
   );
 
-  const { things } = useThings({
-    collectionId: currentCollection?.id || -1,
-    enabled: hasCurrentCollection,
-  });
-
   const table = useReactTable({
     data: things || [],
     columns,
@@ -216,67 +222,65 @@ const CollectionPage = () => {
   });
 
   return (
-    <div>
-      <div className="md:flex md:flex-row">
-        <div className="md:flex-1">
-          <div className="py-4">
-            <h2 className="font-heading text-2xl">{currentCollection?.name}</h2>
-            {currentCollection?.description && (
-              <p className="text-sm text-gray-500">
-                {currentCollection?.description}
-              </p>
-            )}
-          </div>
-          <table className="w-full table-auto rounded border border-faded shadow-sm md:border-separate md:border-spacing-2">
-            <thead className="font-heading text-xs text-gray-700">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="border-b border-faded px-2 py-1 text-left"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr
-                  key={row.id}
-                  className="rounded odd:bg-gray-100 md:odd:bg-transparent"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="px-2 py-2 align-middle text-sm md:py-1 md:text-base"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="block h-screen w-screen grid-cols-layout px-4 pt-[70px] md:top-0 md:mt-[-70px] md:grid md:overflow-hidden md:px-6">
+      <div className="box overflow-y-scroll pb-6">
+        <div className="py-4">
+          <h2 className="font-heading text-2xl">{currentCollection?.name}</h2>
+          {currentCollection?.description && (
+            <p className="text-sm text-gray-500">
+              {currentCollection?.description}
+            </p>
+          )}
         </div>
-
-        <ThingDetailsPane
-          isOpen={!!selectedThingUid}
-          onClose={() => setSelectedThingUid(undefined)}
-          thingUid={selectedThingUid}
-          currentCollectionId={currentCollection?.id}
-        />
+        <div className="mb-1 rounded border border-faded bg-gray-50 px-2 py-1 text-sm">
+          Showing {totalThings} things in this collection
+        </div>
+        <table className="w-full table-auto rounded border border-faded shadow-sm md:border-separate md:border-spacing-2">
+          <thead className="font-heading text-xs text-gray-700 md:text-lg md:text-black">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="border-b border-faded px-2 py-1 text-left"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                className="rounded odd:bg-gray-100 md:odd:bg-transparent"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="px-2 py-2 align-middle text-sm md:py-1 md:text-base"
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      <ThingDetailsPane
+        isOpen={!!selectedThingUid}
+        onClose={() => setSelectedThingUid(undefined)}
+        thingUid={selectedThingUid}
+        currentCollectionId={currentCollection?.id}
+      />
     </div>
   );
 };

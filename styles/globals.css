@@ -17,10 +17,6 @@
     @apply focus-visible:focus-base;
   }
 
-  .body-padding {
-    @apply px-2 md:px-6;
-  }
-
   .pane-open {
     @apply overflow-hidden md:overflow-auto;
   }

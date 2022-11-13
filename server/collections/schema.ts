@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import { BaseResourceEntity } from '@lib/schema';
+import { BaseResourceEntity } from '@server/schema';
 
 export const Collection = BaseResourceEntity.extend({});
 

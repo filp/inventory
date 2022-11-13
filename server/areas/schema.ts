@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BaseResourceEntity } from '@lib/schema';
+import { BaseResourceEntity } from '@server/schema';
 import { Spot } from '@server/spots/schema';
 
 export const Area = BaseResourceEntity.extend({});

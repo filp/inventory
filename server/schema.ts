@@ -18,8 +18,3 @@ export const BaseResourceEntity = BaseEntity.extend({
   name: Name,
   description: Description,
 });
-
-export const Pagination = z.object({
-  cursor: UID.optional(),
-  limit: z.number().max(500).default(150),
-});

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ID } from '@lib/schema';
+import { ID } from '@server/schema';
 
 export const Label = z.object({
   id: ID,

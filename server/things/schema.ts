@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BaseResourceEntity, ID, UID } from '@lib/schema';
+import { BaseResourceEntity, ID, UID } from '@server/schema';
 import { Label } from '@server/labels/schema';
 
 export const Thing = BaseResourceEntity.omit({ id: true }).extend({

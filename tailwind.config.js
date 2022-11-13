@@ -15,6 +15,10 @@ module.exports = {
       faded: colors.gray[300],
     },
     extend: {
+      gridTemplateColumns: {
+        layout: '1fr 400px',
+      },
+
       fontFamily: {
         sans: ['IBM Plex Sans', 'system-ui', 'sans-serif'],
         heading: ['Montserrat', 'IBM Plex Sans', 'system-ui', 'sans-serif'],
