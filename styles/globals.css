@@ -32,4 +32,9 @@
   .page-content {
     @apply px-4 md:px-12;
   }
+
+  .quantity:before {
+    content: 'x ';
+    @apply text-sm text-gray-400;
+  }
 }

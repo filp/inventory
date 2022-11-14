@@ -31,10 +31,23 @@ const columnHelper = createColumnHelper<ThingWithLabelIds>();
 
 const paneScrollClass = 'pane-open';
 
-const Quantity = ({ children: quantity }: { children: ReactNode }) => (
-  <>
-    <span className="hidden text-faded md:inline">x</span> {quantity}
-  </>
+const Quantity = ({
+  children: quantity,
+  small,
+}: {
+  children: ReactNode;
+  small?: boolean;
+}) => (
+  <span
+    className={cn(
+      'quantity whitespace-nowrap rounded border border-faded px-1 align-baseline shadow-sm',
+      {
+        'text-xs': small,
+      }
+    )}
+  >
+    {quantity}
+  </span>
 );
 
 const ThingDetailsPane = ({
@@ -203,12 +216,13 @@ const CollectionPage = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor('name', {
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <span>
+            {info.getValue()}{' '}
+            <Quantity small>{info.row.original.quantity}</Quantity>
+          </span>
+        ),
         header: 'Name',
-      }),
-      columnHelper.accessor('quantity', {
-        cell: (info) => <Quantity>{info.getValue()}</Quantity>,
-        header: 'Qty',
       }),
       columnHelper.accessor('labelIds', {
         cell: (info) => <LabelList labels={withLabelIds(info.getValue())} />,
