@@ -25,6 +25,7 @@ import { ArrowLongRight } from '@components/Icons/ArrowLongRight';
 import { ChatBubble } from '@components/Icons/ChatBubble';
 import { routes } from '@lib/routes';
 import { useThingUidFromPath } from '@lib/things/useThingUidFromPath';
+import { IconButton } from '@components/Button';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 
@@ -64,13 +65,6 @@ const ThingDetailsPane = ({
     return () => body.classList.remove(paneScrollClass);
   }, [isOpen]);
 
-  const onClosePane = (event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    onClose();
-  };
-
   const panelClass = cn(
     'md:pb-4 bg-white',
     'fixed h-screen top-0 right-0 md:relative overflow-y-scroll md:h-auto w-[85%] md:w-full',
@@ -104,7 +98,6 @@ const ThingDetailsPane = ({
         </div>
       ) : null}
       <div className="p-4">
-        <div className="flex flex-row justify-end"></div>
         <h3 className="pt-1 font-heading text-xl">{thing.name}</h3>
         <p className="max-w-prose pt-2 text-sm text-gray-600">
           {thing.description}
@@ -152,15 +145,16 @@ const ThingDetailsPane = ({
     <div className="box">
       <div
         className="fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-20 backdrop-blur-sm md:hidden"
-        onClick={onClosePane}
+        onClick={onClose}
       ></div>
       <div className={panelClass}>
         <div
           className="h-[var(--header-height)] border-b border-faded leading-[var(--header-height)] md:sr-only"
-          onClick={onClosePane}
+          onClick={onClose}
         >
           <div className="flex cursor-pointer flex-row items-center gap-2 px-4">
-            <ChevronLeft /> Return to list
+            <IconButton icon={<ChevronLeft />} onPress={onClose} /> Return to
+            list
           </div>
         </div>
 

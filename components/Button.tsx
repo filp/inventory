@@ -7,16 +7,41 @@ const baseButtonKlass =
 const buttonDisabledKlass =
   'bg-white text-gray-500 outline outline-gray-300 outline-dashed cursor-default pointer-events-none';
 
+type ButtonProps = {
+  onPress?: () => void;
+  disabled?: boolean;
+  iconLeft?: JSX.Element;
+  iconRight?: JSX.Element;
+};
+
 export const SubmitButton = ({
   label,
   disabled,
-}: {
-  label?: string;
-  disabled?: boolean;
-}) => {
+}: Pick<ButtonProps, 'disabled'> & { label?: string }) => {
   const klass = cn(baseButtonKlass, disabled && buttonDisabledKlass);
 
   return <input type="submit" value={label || 'Submit'} className={klass} />;
+};
+
+export const IconButton = ({
+  icon,
+  onPress,
+}: Pick<ButtonProps, 'onPress' | 'disabled'> & { icon: JSX.Element }) => {
+  const onClick = () => {
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    onPress && onPress();
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className="focus-ring rounded border border-transparent p-1 hover:border-faded hover:shadow-sm"
+    >
+      {icon}
+    </button>
+  );
 };
 
 export const Button = ({
@@ -25,12 +50,7 @@ export const Button = ({
   children,
   iconLeft,
   iconRight,
-}: React.PropsWithChildren<{
-  onPress?: () => void;
-  disabled?: boolean;
-  iconLeft?: JSX.Element;
-  iconRight?: JSX.Element;
-}>) => {
+}: React.PropsWithChildren<ButtonProps>) => {
   const onClick = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();

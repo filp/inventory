@@ -5,16 +5,18 @@ import { EyeSlash } from './Icons/EyeSlash';
 type DefinitionListProps = {
   header?: string;
   description?: string;
+  className?: string;
 };
 
 export const DefinitionList = ({
   header,
   description,
   children,
+  className,
 }: React.PropsWithChildren<DefinitionListProps>) => (
-  <div className="overflow-hidden bg-white">
+  <div className={cn('overflow-hidden', className)}>
     {header && (
-      <div className="px-4 py-5 sm:px-6">
+      <div className="">
         <h3 className="text-lg font-medium leading-6 text-gray-900">
           {header}
         </h3>
@@ -30,13 +32,8 @@ export const DefinitionList = ({
 export const DefinitionRow = ({
   label,
   children,
-}: React.PropsWithChildren<{ label: string; idx?: number }>) => (
-  <div
-    className={cn(
-      'px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6',
-      'odd:bg-transparent even:bg-gray-50'
-    )}
-  >
+}: React.PropsWithChildren<{ label: string; description?: string }>) => (
+  <div className="px-4 py-5 odd:bg-transparent even:bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
     <dt className="text-sm font-medium text-gray-500">{label}</dt>
     <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
       {children}

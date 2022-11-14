@@ -8,11 +8,15 @@
 
 @layer base {
   a {
-    @apply focus-ring text-indigo-800 hover:text-indigo-500;
+    @apply link-like;
   }
 }
 
 @layer utilities {
+  .link-like {
+    @apply focus-ring cursor-pointer text-indigo-800 hover:text-indigo-500;
+  }
+
   .focus-base {
     @apply rounded outline-none ring-indigo-800 ring-offset-1 focus-visible:ring-2;
   }

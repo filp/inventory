@@ -1,30 +1,45 @@
 import '../styles/globals.css';
+import { useState } from 'react';
 import Head from 'next/head';
 import type { AppType } from 'next/app';
 import { trpc } from '@lib/trpc';
-import { CollectionPicker } from '@components/Collections/CollectionPicker';
+import { CurrentCollectionSelector } from '@components/Collections/CollectionSelector';
 import { Toaster } from '@components/Toaster';
+import { Button } from '@components/Button';
+import { CreateThingsModal } from '@components/Things/CreateThingsModal';
 
-const InventoryApp: AppType = ({ Component, pageProps }) => (
-  <>
-    <Head>
-      <title>Inventory</title>
-    </Head>
-    <div className="w-screen">
-      <header className="page-content flex h-[var(--header-height)] w-screen flex-row items-center gap-4 border-b border-faded">
-        <div className="font-heading text-lg text-black">inventory</div>
-        <CollectionPicker />
-      </header>
+const InventoryApp: AppType = ({ Component, pageProps }) => {
+  const [createThingsModalIsOpen, setCreateThingsModalIsOpen] = useState(false);
 
-      <div className="">
-        <Component {...pageProps} />
+  return (
+    <>
+      <Head>
+        <title>Inventory</title>
+      </Head>
+      <div className="w-screen">
+        <header className="page-content flex h-[var(--header-height)] w-screen flex-row items-center justify-between gap-4 border-b border-faded">
+          <div className="font-heading text-lg text-black">inventory</div>
+          <CurrentCollectionSelector />
+          <Button onPress={() => setCreateThingsModalIsOpen(true)}>
+            Add things
+          </Button>
+        </header>
+
+        <div className="">
+          <Component {...pageProps} />
+        </div>
+
+        <div className="fixed bottom-0 z-50 w-screen">
+          <Toaster />
+        </div>
+
+        <CreateThingsModal
+          isOpen={createThingsModalIsOpen}
+          onClose={() => setCreateThingsModalIsOpen(false)}
+        />
       </div>
-
-      <div className="fixed bottom-0 z-50 w-screen">
-        <Toaster />
-      </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 export default trpc.withTRPC(InventoryApp);
