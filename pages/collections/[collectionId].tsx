@@ -106,7 +106,9 @@ const ThingDetailsPane = ({
       <div className="p-4">
         <div className="flex flex-row justify-end"></div>
         <h3 className="pt-1 font-heading text-xl">{thing.name}</h3>
-        <p className="text-sm text-gray-600">{thing.description}</p>
+        <p className="max-w-prose pt-2 text-sm text-gray-600">
+          {thing.description}
+        </p>
 
         <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
           <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
@@ -154,7 +156,7 @@ const ThingDetailsPane = ({
       ></div>
       <div className={panelClass}>
         <div
-          className="h-[70px] border-b border-faded leading-[70px] md:sr-only"
+          className="h-[var(--header-height)] border-b border-faded leading-[var(--header-height)] md:sr-only"
           onClick={onClosePane}
         >
           <div className="flex cursor-pointer flex-row items-center gap-2 px-4">
@@ -229,60 +231,66 @@ const CollectionPage = () => {
   });
 
   return (
-    <div className="block h-screen w-screen grid-cols-layout px-4 pt-[70px] md:top-0 md:mt-[-70px] md:grid md:overflow-hidden md:px-6">
+    <div className="page-content block h-screen w-screen grid-cols-layout pt-[var(--header-height)] md:top-0 md:-mt-[var(--header-height)] md:grid md:overflow-hidden">
       <div className="box overflow-y-scroll pb-6">
         <div className="py-4">
           <h2 className="font-heading text-2xl">{currentCollection?.name}</h2>
           {currentCollection?.description && (
-            <p className="text-sm text-gray-500">
+            <p className="max-w-prose pt-2 text-sm text-gray-500">
               {currentCollection?.description}
             </p>
           )}
         </div>
-        <div className="mb-1 rounded border border-faded bg-gray-50 px-2 py-1 text-sm">
-          Showing {things?.length || 0}/{totalThings} things in this collection
+        <div className="md:pr-6">
+          <div className="mb-1 rounded border border-faded bg-gray-50 px-2 py-1 text-sm">
+            Showing {things?.length || 0}/{totalThings} things in this
+            collection
+          </div>
+          <table className="w-full table-auto">
+            <thead className="text-gray-700 md:text-black">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="border border-faded bg-gray-100 p-1 text-left text-sm font-normal"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="rounded odd:bg-gray-100 md:odd:bg-transparent"
+                  onClick={() => onSelectThing(row.original)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className={cn('overflow-hidden border border-faded p-1', {
+                        'bg-indigo-50': isSelectedThing(cell.row.original),
+                      })}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <table className="w-full table-auto">
-          <thead className="text-gray-700 md:text-black">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="border border-faded bg-gray-100 p-1 text-left text-sm font-normal"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className="rounded odd:bg-gray-100 md:odd:bg-transparent"
-                onClick={() => onSelectThing(row.original)}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className={cn('overflow-hidden border border-faded p-1', {
-                      'bg-indigo-50': isSelectedThing(cell.row.original),
-                    })}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
 
       <ThingDetailsPane

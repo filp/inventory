@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --header-height: 70px;
+}
+
 @layer base {
   a {
     @apply focus-ring text-indigo-800 hover:text-indigo-500;
@@ -19,5 +23,9 @@
 
   .pane-open {
     @apply overflow-hidden md:overflow-auto;
+  }
+
+  .page-content {
+    @apply px-4 md:px-12;
   }
 }
