@@ -77,6 +77,7 @@ model Thing {
   spot   Spot @relation(fields: [spotId], references: [id])
 
   thingLabels ThingLabel[]
+  files       ThingFile[]
 
   @@index([name])
   @@index([spotId])
@@ -109,4 +110,23 @@ model ThingLabel {
   thing Thing @relation(fields: [thingId], references: [id])
 
   @@unique([thingId, labelId])
+}
+
+model ThingFile {
+  id Int @id @default(autoincrement())
+
+  thingId Int
+  fileId  Int
+
+  thing Thing @relation(fields: [thingId], references: [id])
+  file  File  @relation(fields: [fileId], references: [id])
+}
+
+model File {
+  id       Int    @id @default(autoincrement())
+  mimeType String
+  name     String
+  uri      String
+
+  thingFiles ThingFile[]
 }

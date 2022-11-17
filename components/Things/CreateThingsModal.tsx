@@ -4,6 +4,7 @@ import { CollectionSelector } from '@components/Collections/CollectionSelector';
 import { useCollections } from '@lib/collections/useCollections';
 import { IconButton, SubmitButton } from '@components/Button';
 import { CloseIcon } from '@components/Icons/CloseIcon';
+import { FileUploader } from '@components/FileUploader';
 
 const CreateSingleThingForm = () => {
   const { collections } = useCollections();
@@ -30,6 +31,13 @@ const CreateSingleThingForm = () => {
         )}
       />
 
+      <FileUploader
+        acceptedTypes={{
+          'image/jpeg': ['.jpg', '.jpeg'],
+        }}
+        maxFiles={1}
+      />
+
       <SubmitButton label="Submit" />
     </form>
   );
@@ -43,8 +51,8 @@ export const CreateThingsModal = ({
   onClose: () => void;
 }) => (
   <Dialog open={isOpen} onClose={onClose}>
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 md:p-12">
-      <Dialog.Panel className="h-full w-full border-faded bg-white shadow-sm md:rounded md:border">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 md:p-12 ">
+      <Dialog.Panel className="h-full w-full overflow-y-scroll border-faded bg-white shadow-sm md:rounded md:border">
         <Dialog.Title className="page-content flex h-[var(--header-height)] flex-row items-center justify-between border-b border-faded font-heading text-xl">
           Add things to inventory
           <IconButton icon={<CloseIcon />} onPress={onClose} />
