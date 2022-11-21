@@ -72,13 +72,7 @@ export const FileUploader = (
     maxFiles,
     onDrop: async (fileList) => {
       setFiles([...files, ...fileList]);
-      await Promise.all(
-        fileList.map(async (f) => {
-          const resp = await uploadFile(f);
-
-          console.log(resp);
-        })
-      );
+      await Promise.all(fileList.map(async (f) => uploadFile(f)));
     },
   });
 

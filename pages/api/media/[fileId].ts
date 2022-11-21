@@ -7,7 +7,6 @@ const getMedia: NextApiHandler = async (req, res) => {
   if (req.method !== 'GET') return res.status(404).end();
 
   const fileId = parseInt(req.query.fileId as string);
-
   const fileEntity = await prisma.file.findFirst({
     where: {
       id: fileId,

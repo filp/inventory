@@ -37,6 +37,7 @@
     "react-hook-form": "^7.39.1",
     "react-hot-toast": "^2.4.0",
     "react-qr-code": "^2.0.8",
+    "tesseract.js": "^3.0.3",
     "zod": "^3.19.1"
   },
   "devDependencies": {
