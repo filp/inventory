@@ -3,7 +3,6 @@ import { useDropzone } from 'react-dropzone';
 import cn from 'classnames';
 import { getBaseUrl } from '@lib/trpc';
 import type { UploadMediaResponse } from '@api/media';
-import { useImageTextRecognition } from '@lib/ocr/useImageTextRecognition';
 
 const isImageFile = (mimeType: string) => mimeType.split('/')[0] === 'image';
 
@@ -55,18 +54,11 @@ type FileUploaderProps = {
   };
   maxFiles?: number;
   inputName?: string;
-  extractImageText?: boolean;
   onFilesReady?: () => void;
 };
 
 export const FileUploader = (
-  {
-    message,
-    acceptedTypes,
-    maxFiles,
-    inputName,
-    extractImageText,
-  }: FileUploaderProps = {
+  { message, acceptedTypes, maxFiles, inputName }: FileUploaderProps = {
     message: 'Drop files in the box above to upload them',
     acceptedTypes: undefined,
     maxFiles: 1,
@@ -74,7 +66,6 @@ export const FileUploader = (
   }
 ) => {
   const [files, setFiles] = useState<File[]>([]);
-  const ocr = useImageTextRecognition();
 
   const { getRootProps, getInputProps, isDragAccept } = useDropzone({
     accept: acceptedTypes,
@@ -82,17 +73,7 @@ export const FileUploader = (
     onDrop: async (fileList) => {
       setFiles([...files, ...fileList]);
 
-      await Promise.all(
-        fileList.map(async (f) => {
-          if (extractImageText && ocr && isImageFile(f.type)) {
-            const d = await ocr.recognize(f);
-
-            console.log('reco', d);
-          }
-
-          await uploadFile(f);
-        })
-      );
+      await Promise.all(fileList.map(async (f) => uploadFile(f)));
     },
   });
 

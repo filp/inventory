@@ -36,7 +36,6 @@ const CreateSingleThingForm = () => {
           'image/jpeg': ['.jpg', '.jpeg'],
         }}
         maxFiles={1}
-        extractImageText
       />
 
       <SubmitButton label="Submit" />
