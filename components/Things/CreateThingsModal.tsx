@@ -4,39 +4,74 @@ import { CollectionSelector } from '@components/Collections/CollectionSelector';
 import { useCollections } from '@lib/collections/useCollections';
 import { IconButton, SubmitButton } from '@components/Button';
 import { CloseIcon } from '@components/Icons/CloseIcon';
-import { FileUploader } from '@components/FileUploader';
+import { FileUploader, imageTypes } from '@components/FileUploader';
+import { FormInput, TextArea, TextInput } from '@components/Forms';
+
+type CreateSingleThingFormData = {
+  name: string;
+  description: string;
+  collectionId: number;
+  fileIds: number[];
+};
 
 const CreateSingleThingForm = () => {
   const { collections } = useCollections();
-  const { handleSubmit, control, setValue } = useForm({});
+  const { handleSubmit, control, register, setValue } =
+    useForm<CreateSingleThingFormData>();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: CreateSingleThingFormData) => {
     console.log(data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="collection"
-        control={control}
-        rules={{ required: true }}
-        render={({ field }) => (
-          <CollectionSelector
-            name={field.name}
-            collections={collections || []}
-            onPickCollection={(collection) => {
-              setValue(field.name, collection);
-            }}
-          />
-        )}
+      <TextInput
+        {...register('name', { required: true })}
+        label="Name"
+        placeholder="Thing Name"
+        required
       />
 
-      <FileUploader
-        acceptedTypes={{
-          'image/jpeg': ['.jpg', '.jpeg'],
-        }}
-        maxFiles={1}
-      />
+      <TextArea {...register('description')} label="Description"></TextArea>
+
+      <FormInput label="Collection">
+        <Controller
+          name="collectionId"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <CollectionSelector
+              name={field.name}
+              collections={collections || []}
+              onPickCollection={(collection) => {
+                setValue(field.name, collection.id);
+              }}
+            />
+          )}
+        />
+      </FormInput>
+
+      <FormInput name="fileIds" label="Photos">
+        <Controller
+          name="fileIds"
+          control={control}
+          render={({ field }) => (
+            <FileUploader
+              acceptedTypes={imageTypes}
+              onFilesReady={(uploadedFiles) => {
+                const previousFieldValues = field.value || [];
+
+                setValue(field.name, [
+                  ...previousFieldValues,
+                  ...uploadedFiles.map((uf) => uf.id),
+                ]);
+              }}
+              maxFiles={1}
+              inputName={field.name}
+            />
+          )}
+        />
+      </FormInput>
 
       <SubmitButton label="Submit" />
     </form>

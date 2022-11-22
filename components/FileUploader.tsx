@@ -6,6 +6,11 @@ import type { UploadMediaResponse } from '@api/media';
 
 const isImageFile = (mimeType: string) => mimeType.split('/')[0] === 'image';
 
+export const imageTypes = {
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+};
+
 const uploadFile = async (file: File) => {
   const formData = new FormData();
 
@@ -35,7 +40,14 @@ const ImagePreview = ({ file }: { file: File }) => {
   }, [file, objectUrl]);
 
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={objectUrl} alt="" />;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={objectUrl}
+      alt=""
+      className="max-w-[32%] rounded border border-faded text-sm"
+    />
+  );
 };
 
 const FilePreview = ({ file }: { file: File }) => {
@@ -47,18 +59,32 @@ const FilePreview = ({ file }: { file: File }) => {
   return <div>{fileName}</div>;
 };
 
+type UploadedFile = {
+  id: number;
+  url: string;
+  sourceFile: File;
+};
+
 type FileUploaderProps = {
   message?: string;
   acceptedTypes?: {
-    [mimeType: string]: `.${string}`[];
+    [mimeType: string]: string[];
   };
   maxFiles?: number;
   inputName?: string;
-  onFilesReady?: () => void;
+  onFilesReady?: (uploadedFiles: UploadedFile[]) => void;
+  onProcessingFiles?: (files: File[]) => void;
 };
 
 export const FileUploader = (
-  { message, acceptedTypes, maxFiles, inputName }: FileUploaderProps = {
+  {
+    message,
+    acceptedTypes,
+    maxFiles,
+    inputName,
+    onFilesReady,
+    onProcessingFiles,
+  }: FileUploaderProps = {
     message: 'Drop files in the box above to upload them',
     acceptedTypes: undefined,
     maxFiles: 1,
@@ -71,25 +97,47 @@ export const FileUploader = (
     accept: acceptedTypes,
     maxFiles,
     onDrop: async (fileList) => {
+      onProcessingFiles && onProcessingFiles(fileList);
+
       setFiles([...files, ...fileList]);
 
-      await Promise.all(fileList.map(async (f) => uploadFile(f)));
+      const uploadedFiles: UploadedFile[] = await Promise.all(
+        fileList.map(async (f) => {
+          const uploadedFile = await uploadFile(f);
+
+          return {
+            id: uploadedFile.id,
+            url: uploadedFile.url,
+            sourceFile: f,
+          };
+        })
+      );
+
+      onFilesReady && onFilesReady(uploadedFiles);
     },
   });
 
-  const containerClass = cn('rounded border border-dashed border-faded p-8', {
+  const containerClass = cn('rounded border border-dashed border-faded p-4', {
     'ring ring-indigo-500': isDragAccept,
   });
 
   return (
-    <div className="py-4">
+    <div>
       <div className={containerClass} {...getRootProps()}>
         <input {...getInputProps()} name={inputName} />
-        {files.map((file, i) => (
-          <FilePreview file={file} key={i} />
-        ))}
+
+        {files.length > 0 ? (
+          <div className="flex flex-row flex-wrap gap-2">
+            {files.map((file, i) => (
+              <FilePreview file={file} key={i} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-sm text-gray-500">
+            {message || 'Drop photos or click here to upload files'}
+          </p>
+        )}
       </div>
-      <p className="p-2 text-center text-sm text-gray-500">{message}</p>
     </div>
   );
 };
