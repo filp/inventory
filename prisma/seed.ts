@@ -213,10 +213,13 @@ const seedThingsAndLabels = async ({
   labels: Label[];
   spots: Spot[];
 }) => {
+  const things: Thing[] = [];
+
   for (let i = 0; i < amounts.things; i++) {
     const id = asId(i);
     const data = thingFactory({
-      collectionId: rand(collections).id,
+      // Always leave the last collection empty:
+      collectionId: rand(collections.slice(0, -1)).id,
       spotId: rand(spots).id,
     });
 
@@ -229,13 +232,15 @@ const seedThingsAndLabels = async ({
       length: randNumber({ min: 0, max: 6 }),
     }).map((l) => l.id);
 
-    await prisma.thing.upsert({
-      create: dataWithId,
-      update: dataWithId,
-      where: {
-        id,
-      },
-    });
+    things.push(
+      await prisma.thing.upsert({
+        create: dataWithId,
+        update: dataWithId,
+        where: {
+          id,
+        },
+      })
+    );
 
     // Delete all thingLabels for this thing:
     await prisma.thingLabel.deleteMany({
@@ -256,6 +261,8 @@ const seedThingsAndLabels = async ({
       })),
     });
   }
+
+  return things;
 };
 
 const seedDatabase = async () => {
@@ -263,13 +270,31 @@ const seedDatabase = async () => {
 
   const collections = await seedCollections();
   const labels = await seedLabels();
-  const { spots } = await seedAreasAndSpots();
+  const { spots, areas } = await seedAreasAndSpots();
 
-  await seedThingsAndLabels({
+  const things = await seedThingsAndLabels({
     collections,
     labels,
     spots,
   });
+
+  const resetPromises = [
+    ['Collection', collections],
+    ['Label', labels],
+    ['Spot', spots],
+    ['Area', areas],
+    ['Thing', things],
+  ].map((pair) => {
+    const [tableName, list] = pair;
+
+    const query = `ALTER SEQUENCE "${tableName}_id_seq" RESTART WITH ${
+      list.length + 1
+    }`;
+
+    return prisma.$executeRawUnsafe(query);
+  });
+
+  await Promise.all(resetPromises);
 };
 
 void seedDatabase();

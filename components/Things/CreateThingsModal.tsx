@@ -6,6 +6,7 @@ import { IconButton, SubmitButton } from '@components/Button';
 import { CloseIcon } from '@components/Icons/CloseIcon';
 import { FileUploader, imageTypes } from '@components/FileUploader';
 import { FormInput, TextArea, TextInput } from '@components/Forms';
+import { useCreateThing } from '@lib/things/useCreateThing';
 
 type CreateSingleThingFormData = {
   name: string;
@@ -16,11 +17,15 @@ type CreateSingleThingFormData = {
 
 const CreateSingleThingForm = () => {
   const { collections } = useCollections();
+  const { mutate: createThing } = useCreateThing();
   const { handleSubmit, control, register, setValue } =
     useForm<CreateSingleThingFormData>();
 
   const onSubmit = (data: CreateSingleThingFormData) => {
-    console.log(data);
+    createThing({
+      ...data,
+      spotId: 1,
+    });
   };
 
   return (
@@ -66,7 +71,7 @@ const CreateSingleThingForm = () => {
                   ...uploadedFiles.map((uf) => uf.id),
                 ]);
               }}
-              maxFiles={1}
+              maxFiles={32}
               inputName={field.name}
             />
           )}
@@ -95,14 +100,14 @@ export const CreateThingsModal = ({
         <div className="page-content py-4">
           <Tab.Group>
             <Tab.List className="flex w-fit flex-row items-center rounded border border-faded text-sm shadow-sm">
-              <Tab className="border-r border-faded px-2 py-1 ui-selected:bg-indigo-100">
-                Add a single thing
+              <Tab className="border-r border-faded p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
+                Quick Add
               </Tab>
-              <Tab className="border-r border-faded px-2 py-1 ui-selected:bg-indigo-100">
-                Add things from plain text
+              <Tab className="border-r border-faded p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
+                Plain Text
               </Tab>
-              <Tab className="px-2 py-1 ui-selected:bg-indigo-100">
-                Import from a file
+              <Tab className="p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
+                Import File
               </Tab>
             </Tab.List>
             <Tab.Panels className="py-2">

@@ -80,7 +80,7 @@ const ThingDetailsPane = ({
 
   const panelClass = cn(
     'md:pb-4 bg-white',
-    'fixed h-screen top-0 right-0 md:relative overflow-y-scroll md:h-auto w-[85%] md:w-full',
+    'fixed h-screen top-0 right-0 md:relative overflow-y-scroll md:overflow-y-auto md:h-auto w-[85%] md:w-full',
     { 'invisible md:visible': !isOpen }
   );
 
@@ -117,6 +117,11 @@ const ThingDetailsPane = ({
         </p>
 
         <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
+          {thing.files.map(({ id }) => (
+            <picture key={id}>
+              <img alt="" src={routes.media({ fileId: id })} />
+            </picture>
+          ))}
           <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
           <ThingUID>{thing.uid}</ThingUID>
         </div>
@@ -155,7 +160,7 @@ const ThingDetailsPane = ({
   ) : null;
 
   return (
-    <div className="box">
+    <div className="box md:overflow-y-scroll">
       <div
         className="fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-20 backdrop-blur-sm md:hidden"
         onClick={onClose}

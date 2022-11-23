@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { BaseResourceEntity, ID, UID } from '@server/schema';
 import { Label } from '@server/labels/schema';
+import { File } from '@server/files/schema';
 
 export const Thing = BaseResourceEntity.omit({ id: true }).extend({
   uid: UID,
@@ -14,6 +15,7 @@ export type Thing = z.infer<typeof Thing>;
 export const ThingWithLabelIds = Thing.extend({ labelIds: z.array(ID) });
 export type ThingWithLabelIds = z.infer<typeof ThingWithLabelIds>;
 
-export const ThingWithLabels = Thing.extend({
+export const ThingWithLabelsAndFiles = Thing.extend({
   labels: z.array(Label),
+  files: z.array(File),
 });

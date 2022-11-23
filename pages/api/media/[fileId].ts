@@ -22,15 +22,25 @@ const getMedia: NextApiHandler = async (req, res) => {
     fileEntity.uri.split('///')[1]
   );
 
-  const stat = await fs.promises.stat(filePath);
-  const readStream = fs.createReadStream(filePath);
+  try {
+    const stat = await fs.promises.stat(filePath);
+    const readStream = fs.createReadStream(filePath);
 
-  res.writeHead(200, {
-    'Content-Type': fileEntity.mimeType,
-    'Content-Length': stat.size,
-  });
+    res.writeHead(200, {
+      'Content-Type': fileEntity.mimeType,
+      'Content-Length': stat.size,
+    });
 
-  readStream.pipe(res);
+    readStream.pipe(res);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('error reading media file', err);
+
+    res.status(404).json({
+      message: 'Invalid or missing file',
+      code: 'invalid_file',
+    });
+  }
 };
 
 export default getMedia;

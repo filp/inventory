@@ -4,6 +4,7 @@ import { createCollection } from './collections/createCollection';
 import { getCollections } from './collections/getCollections';
 import { getThings } from './things/getThings';
 import { getThing } from './things/getThing';
+import { createThing } from './things/createThing';
 import { router } from './trpc';
 import { getLabels } from './labels/getLabels';
 
@@ -19,6 +20,7 @@ export const appRouter = router({
   // Things:
   getThings,
   getThing,
+  createThing,
 
   // Labels
   getLabels,

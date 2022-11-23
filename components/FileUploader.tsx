@@ -6,6 +6,11 @@ import type { UploadMediaResponse } from '@api/media';
 
 const isImageFile = (mimeType: string) => mimeType.split('/')[0] === 'image';
 
+const isProbablySameFile = (fileA: File, fileB: File) =>
+  fileA.name === fileB.name &&
+  fileA.type === fileB.type &&
+  fileA.lastModified === fileB.lastModified;
+
 export const imageTypes = {
   'image/jpeg': ['.jpg', '.jpeg'],
   'image/png': ['.png'],
@@ -96,6 +101,22 @@ export const FileUploader = (
   const { getRootProps, getInputProps, isDragAccept } = useDropzone({
     accept: acceptedTypes,
     maxFiles,
+    disabled: maxFiles ? files.length >= maxFiles : false,
+    preventDropOnDocument: true,
+    validator: (file) => {
+      const fileAlreadySelected = files.some((otherFile) =>
+        isProbablySameFile(file, otherFile)
+      );
+
+      if (fileAlreadySelected) {
+        return {
+          code: 'duplicate_file',
+          message: 'File already selected (naive check)',
+        };
+      }
+
+      return null;
+    },
     onDrop: async (fileList) => {
       onProcessingFiles && onProcessingFiles(fileList);
 

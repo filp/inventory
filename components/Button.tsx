@@ -27,7 +27,7 @@ export const IconButton = ({
   icon,
   onPress,
 }: Pick<ButtonProps, 'onPress' | 'disabled'> & { icon: JSX.Element }) => {
-  const onClick = () => {
+  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault();
     event?.stopPropagation();
 

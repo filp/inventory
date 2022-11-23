@@ -2,21 +2,26 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { publicProcedure } from '@server/trpc';
 import prisma from '@server/prisma';
-import { ThingWithLabels } from './schema';
+import { ThingWithLabelsAndFiles } from './schema';
 
 export const getThing = publicProcedure
   .input(
     z.object({
-      uid: ThingWithLabels.shape.uid,
+      uid: ThingWithLabelsAndFiles.shape.uid,
     })
   )
-  .output(ThingWithLabels)
+  .output(ThingWithLabelsAndFiles)
   .query(async ({ input }) => {
     const thing = await prisma.thing.findFirst({
       where: {
         uid: input.uid,
       },
       include: {
+        files: {
+          include: {
+            file: true,
+          },
+        },
         thingLabels: {
           include: {
             label: true,
@@ -32,10 +37,11 @@ export const getThing = publicProcedure
       });
     }
 
-    const { thingLabels, ...thingProps } = thing;
+    const { thingLabels, files, ...thingProps } = thing;
 
     return {
       ...thingProps,
       labels: thingLabels.map((thingLabel) => thingLabel.label),
+      files: files.map((thingFile) => thingFile.file),
     };
   });
