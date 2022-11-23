@@ -2,8 +2,8 @@ import { httpBatchLink } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
 import type { AppRouter } from '@server/router';
 
-export const getBaseUrl = () => {
-  if (typeof window !== 'undefined')
+export const getBaseUrl = ({ useAbsolute }: { useAbsolute?: boolean } = {}) => {
+  if (typeof window !== 'undefined' && !useAbsolute)
     // browser should use relative path
     return '';
 

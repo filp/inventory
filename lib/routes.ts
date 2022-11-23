@@ -21,5 +21,5 @@ export const routes = {
     },
   }),
   media: ({ fileId }: { fileId: number }) =>
-    `${getBaseUrl()}/api/media/${fileId}`,
+    `${getBaseUrl({ useAbsolute: true })}/api/media/${fileId}`,
 };

@@ -1,4 +1,5 @@
 import React, { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { Gallery } from 'react-grid-gallery';
 import { useRouter } from 'next/router';
 import QRCode from 'react-qr-code';
 import Link from 'next/link';
@@ -117,11 +118,17 @@ const ThingDetailsPane = ({
         </p>
 
         <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
-          {thing.files.map(({ id }) => (
-            <picture key={id}>
-              <img alt="" src={routes.media({ fileId: id })} />
-            </picture>
-          ))}
+          <Gallery
+            defaultContainerWidth={100}
+            maxRows={4}
+            images={thing.files.map((file) => ({
+              src: routes.media({ fileId: file.id }),
+              width: file.width || 0,
+              height: file.height || 0,
+              alt: '',
+            }))}
+          />
+
           <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
           <ThingUID>{thing.uid}</ThingUID>
         </div>

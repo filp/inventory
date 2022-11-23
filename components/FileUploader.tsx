@@ -3,8 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import cn from 'classnames';
 import { getBaseUrl } from '@lib/trpc';
 import type { UploadMediaResponse } from '@api/media';
-
-const isImageFile = (mimeType: string) => mimeType.split('/')[0] === 'image';
+import { isImageFile } from '@lib/files/isImageFile';
 
 const isProbablySameFile = (fileA: File, fileB: File) =>
   fileA.name === fileB.name &&

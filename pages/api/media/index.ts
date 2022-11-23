@@ -1,16 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import sizeOf from 'image-size';
 import type { NextApiHandler, NextApiRequest } from 'next';
 import formidable from 'formidable';
 import { getBaseUrl } from '@lib/trpc';
 import prisma from '@server/prisma';
+import { isImageFile } from '@lib/files/isImageFile';
+import type { File } from '@server/files/schema';
 
-export type UploadMediaResponse = {
-  id: number;
-  name: string;
-  mimeType: string;
-  url: string;
-};
+export type UploadMediaResponse = Omit<File, 'uri'> & { url: string };
 
 type UploadData = {
   name: string;
@@ -48,11 +46,20 @@ const uploadMedia: NextApiHandler<UploadMediaResponse> = async (req, res) => {
 
   await fs.promises.rename(file.filepath, newPath);
 
+  const { width, height } = isImageFile(file.mimetype || '')
+    ? sizeOf(newPath)
+    : {
+        width: null,
+        height: null,
+      };
+
   const fileEntity = await prisma.file.create({
     data: {
       mimeType: file.mimetype || mimeType,
       name: name,
       uri: `file:///${file.newFilename}`,
+      width,
+      height,
     },
   });
 
@@ -60,6 +67,8 @@ const uploadMedia: NextApiHandler<UploadMediaResponse> = async (req, res) => {
     id: fileEntity.id,
     mimeType,
     name: name,
+    width: width || null,
+    height: height || null,
     url: `${getBaseUrl()}/api/media/${fileEntity.id}`,
   });
 };
