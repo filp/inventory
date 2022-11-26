@@ -26,6 +26,8 @@ import { ChatBubble } from '@components/Icons/ChatBubble';
 import { routes } from '@lib/routes';
 import { useThingUidFromPath } from '@lib/things/useThingUidFromPath';
 import { IconButton } from '@components/Button';
+import type { File } from '@server/files/schema';
+import { isImageFile } from '@lib/files/isImageFile';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
 const paneScrollClass = 'pane-open';
@@ -48,6 +50,27 @@ const Quantity = ({
     {quantity}
   </span>
 );
+
+const FileGallery = ({ files }: { files: File[] }) => {
+  if (!files.length) {
+    return null;
+  }
+
+  const previewImage = files.find((file) => isImageFile(file.mimeType));
+
+  return (
+    <div className="w-full">
+      {previewImage && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={routes.media({ fileId: previewImage.id })}
+          alt=""
+          className="max-h-[220px] w-full rounded border border-gray-400 object-cover shadow-sm"
+        />
+      )}
+    </div>
+  );
+};
 
 const ThingDetailsPane = ({
   isOpen,
@@ -116,7 +139,7 @@ const ThingDetailsPane = ({
         </p>
 
         <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
-          <div>{thing.files.length}</div>
+          <FileGallery files={thing.files} />
 
           <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
           <ThingUID>{thing.uid}</ThingUID>
