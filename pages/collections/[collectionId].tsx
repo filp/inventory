@@ -1,6 +1,5 @@
 import React, { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import QRCode from 'react-qr-code';
 import Link from 'next/link';
 import cn from 'classnames';
 import {
@@ -16,7 +15,6 @@ import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
 import { ChevronLeft } from '@components/Icons/ChevronLeft';
 import { useThing } from '@lib/things/useThing';
 import { Loader } from '@components/Loader';
-import { ThingUID } from '@components/Things/ThingUID';
 import { DefinitionList, DefinitionRow } from '@components/DefinitionList';
 import { useLabels } from '@lib/labels/useLabels';
 import { LabelList } from '@components/Label';
@@ -65,7 +63,7 @@ const FileGallery = ({ files }: { files: File[] }) => {
         <img
           src={routes.media({ fileId: previewImage.id })}
           alt=""
-          className="max-h-[220px] w-full rounded border border-gray-400 object-cover shadow-sm"
+          className="max-h-[220px] w-full rounded-lg object-cover shadow-sm"
         />
       )}
     </div>
@@ -138,11 +136,8 @@ const ThingDetailsPane = ({
           {thing.description}
         </p>
 
-        <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-faded bg-gray-50 p-4">
+        <div className="py-4">
           <FileGallery files={thing.files} />
-
-          <QRCode value={thing.uid} xlinkTitle={thing.name} size={128} />
-          <ThingUID>{thing.uid}</ThingUID>
         </div>
       </div>
 
