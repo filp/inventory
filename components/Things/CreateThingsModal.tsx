@@ -1,5 +1,6 @@
 import { Dialog, Tab } from '@headlessui/react';
 import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 import { CollectionSelector } from '@components/Collections/CollectionSelector';
 import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
 import { IconButton, SubmitButton } from '@components/Button';
@@ -18,14 +19,18 @@ type CreateSingleThingFormData = {
 const CreateSingleThingForm = () => {
   const { otherCollections, currentCollection } = useCollectionFromPath();
   const { mutate: createThing } = useCreateThing();
-  const { handleSubmit, control, register, setValue } =
-    useForm<CreateSingleThingFormData>();
+  const { handleSubmit, control, register, setValue, reset } =
+    useForm<CreateSingleThingFormData>({
+      defaultValues: {
+        collectionId: currentCollection?.id,
+        fileIds: [],
+      },
+    });
 
   const onSubmit = (data: CreateSingleThingFormData) => {
-    createThing({
-      ...data,
-      spotId: 1,
-    });
+    createThing({ ...data, spotId: 1 });
+    reset();
+    toast('Created new Thing!');
   };
 
   const collections = [
@@ -35,7 +40,7 @@ const CreateSingleThingForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormInput label="Collection">
+      <FormInput required label="Collection">
         <Controller
           name="collectionId"
           control={control}

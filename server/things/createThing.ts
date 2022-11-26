@@ -14,7 +14,7 @@ export const createThing = publicProcedure
       collectionId: true,
       spotId: true,
     }).extend({
-      fileIds: z.array(ID),
+      fileIds: z.array(ID).optional(),
     })
   )
   .output(Thing)
@@ -30,7 +30,7 @@ export const createThing = publicProcedure
       });
 
       const thingFile = await prisma.thingFile.createMany({
-        data: fileIds.map((fileId) => ({
+        data: (fileIds || []).map((fileId) => ({
           thingId: thing.id,
           fileId,
         })),
