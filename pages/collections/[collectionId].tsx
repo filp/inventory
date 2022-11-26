@@ -262,6 +262,16 @@ const CollectionPage = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const onKbdNavigateRow = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
+
+    const nextTarget =
+      (e.key === 'ArrowUp' && e.currentTarget.previousElementSibling) ||
+      (e.key === 'ArrowDown' && e.currentTarget.nextElementSibling);
+
+    nextTarget && (nextTarget as HTMLElement | undefined)?.focus();
+  };
+
   return (
     <div className="page-content block h-screen w-screen grid-cols-layout pt-[var(--header-height)] md:top-0 md:-mt-[var(--header-height)] md:grid md:overflow-hidden">
       <div className="box overflow-y-scroll pb-6">
@@ -303,7 +313,9 @@ const CollectionPage = () => {
                 <tr
                   key={row.id}
                   className="rounded odd:bg-gray-100 md:odd:bg-transparent"
-                  onClick={() => onSelectThing(row.original)}
+                  tabIndex={-1}
+                  onKeyDown={onKbdNavigateRow}
+                  onFocus={() => onSelectThing(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
