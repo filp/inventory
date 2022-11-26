@@ -29,7 +29,6 @@ import { useThingUidFromPath } from '@lib/things/useThingUidFromPath';
 import { IconButton } from '@components/Button';
 
 const columnHelper = createColumnHelper<ThingWithLabelIds>();
-
 const paneScrollClass = 'pane-open';
 
 const Quantity = ({
@@ -121,6 +120,7 @@ const ThingDetailsPane = ({
           <Gallery
             defaultContainerWidth={100}
             maxRows={4}
+            enableImageSelection={false}
             images={thing.files.map((file) => ({
               src: routes.media({ fileId: file.id }),
               width: file.width || 0,
