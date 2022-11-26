@@ -5,8 +5,9 @@ import type { AppType } from 'next/app';
 import { trpc } from '@lib/trpc';
 import { CurrentCollectionSelector } from '@components/Collections/CollectionSelector';
 import { Toaster } from '@components/Toaster';
-import { Button } from '@components/Button';
+import { Button, IconButton } from '@components/Button';
 import { CreateThingsModal } from '@components/Things/CreateThingsModal';
+import { CogIcon } from '@components/Icons/CogIcon';
 
 const InventoryApp: AppType = ({ Component, pageProps }) => {
   const [createThingsModalIsOpen, setCreateThingsModalIsOpen] = useState(false);
@@ -20,9 +21,13 @@ const InventoryApp: AppType = ({ Component, pageProps }) => {
         <header className="page-content flex h-[var(--header-height)] w-screen flex-row items-center justify-between gap-4 border-b border-faded">
           <div className="font-heading text-lg text-black">inventory</div>
           <CurrentCollectionSelector />
-          <Button onPress={() => setCreateThingsModalIsOpen(true)}>
-            Add things
-          </Button>
+
+          <div className="flex flex-row items-center gap-2">
+            <Button onPress={() => setCreateThingsModalIsOpen(true)}>
+              Add things
+            </Button>
+            <IconButton icon={<CogIcon />} />
+          </div>
         </header>
 
         <div className="">
