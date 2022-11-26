@@ -42,7 +42,7 @@ export const CollectionSelector = ({
           >
             {selectedCollection?.name || 'No collection selected'}
           </Listbox.Button>
-          <Listbox.Options className="focus-ring absolute mt-1 min-w-[140px] rounded border border-faded bg-white shadow-sm">
+          <Listbox.Options className="focus-ring absolute z-50 mt-1 min-w-[140px] rounded border border-faded bg-white shadow-sm">
             {collections.map((collection) => (
               <Listbox.Option
                 key={collection.id}
