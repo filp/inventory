@@ -1,7 +1,7 @@
 import { Dialog, Tab } from '@headlessui/react';
 import { useForm, Controller } from 'react-hook-form';
 import { CollectionSelector } from '@components/Collections/CollectionSelector';
-import { useCollections } from '@lib/collections/useCollections';
+import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
 import { IconButton, SubmitButton } from '@components/Button';
 import { CloseIcon } from '@components/Icons/CloseIcon';
 import { FileUploader, imageTypes } from '@components/FileUploader';
@@ -16,7 +16,7 @@ type CreateSingleThingFormData = {
 };
 
 const CreateSingleThingForm = () => {
-  const { collections } = useCollections();
+  const { otherCollections, currentCollection } = useCollectionFromPath();
   const { mutate: createThing } = useCreateThing();
   const { handleSubmit, control, register, setValue } =
     useForm<CreateSingleThingFormData>();
@@ -28,17 +28,13 @@ const CreateSingleThingForm = () => {
     });
   };
 
+  const collections = [
+    ...(currentCollection ? [currentCollection] : []),
+    ...otherCollections,
+  ];
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput
-        {...register('name', { required: true })}
-        label="Name"
-        placeholder="Thing Name"
-        required
-      />
-
-      <TextArea {...register('description')} label="Description"></TextArea>
-
       <FormInput label="Collection">
         <Controller
           name="collectionId"
@@ -47,6 +43,7 @@ const CreateSingleThingForm = () => {
           render={({ field }) => (
             <CollectionSelector
               name={field.name}
+              defaultCollection={currentCollection}
               collections={collections || []}
               onPickCollection={(collection) => {
                 setValue(field.name, collection.id);
@@ -55,6 +52,15 @@ const CreateSingleThingForm = () => {
           )}
         />
       </FormInput>
+
+      <TextInput
+        {...register('name', { required: true })}
+        label="Name"
+        placeholder="Thing Name"
+        required
+      />
+
+      <TextArea {...register('description')} label="Description"></TextArea>
 
       <FormInput name="fileIds" label="Photos">
         <Controller
@@ -103,10 +109,16 @@ export const CreateThingsModal = ({
               <Tab className="border-r border-faded p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
                 Quick Add
               </Tab>
-              <Tab className="border-r border-faded p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
+              <Tab
+                disabled
+                className="border-r border-faded p-4 text-faded ui-selected:bg-indigo-100 md:px-2 md:py-1"
+              >
                 Plain Text
               </Tab>
-              <Tab className="p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
+              <Tab
+                disabled
+                className="p-4 text-faded ui-selected:bg-indigo-100 md:px-2 md:py-1"
+              >
                 Import File
               </Tab>
             </Tab.List>
