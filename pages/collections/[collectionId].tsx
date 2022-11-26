@@ -57,13 +57,13 @@ const FileGallery = ({ files }: { files: File[] }) => {
   const previewImage = files.find((file) => isImageFile(file.mimeType));
 
   return (
-    <div className="w-full">
+    <div className="w-full py-4">
       {previewImage && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={routes.media({ fileId: previewImage.id })}
           alt=""
-          className="max-h-[220px] w-full rounded-lg object-cover shadow-sm"
+          className="max-h-[220px] w-full rounded-lg border border-faded object-cover shadow"
         />
       )}
     </div>
@@ -136,9 +136,7 @@ const ThingDetailsPane = ({
           {thing.description}
         </p>
 
-        <div className="py-4">
-          <FileGallery files={thing.files} />
-        </div>
+        <FileGallery files={thing.files} />
       </div>
 
       <DefinitionList>
