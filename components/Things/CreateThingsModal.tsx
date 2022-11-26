@@ -1,13 +1,13 @@
-import { Dialog, Tab } from '@headlessui/react';
+import { Tab } from '@headlessui/react';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { CollectionSelector } from '@components/Collections/CollectionSelector';
 import { useCollectionFromPath } from '@lib/collections/useCollectionFromPath';
-import { IconButton, SubmitButton } from '@components/Button';
-import { CloseIcon } from '@components/Icons/CloseIcon';
+import { SubmitButton } from '@components/Button';
 import { FileUploader, imageTypes } from '@components/FileUploader';
 import { FormInput, TextArea, TextInput } from '@components/Forms';
 import { useCreateThing } from '@lib/things/useCreateThing';
+import { Modal } from '@components/Modal';
 
 type CreateSingleThingFormData = {
   name: string;
@@ -101,42 +101,32 @@ export const CreateThingsModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => (
-  <Dialog open={isOpen} onClose={onClose}>
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 md:p-12 ">
-      <Dialog.Panel className="h-full w-full overflow-y-scroll border-faded bg-white shadow-sm md:rounded md:border">
-        <Dialog.Title className="page-content flex h-[var(--header-height)] flex-row items-center justify-between border-b border-faded font-heading text-xl">
-          Add things to inventory
-          <IconButton icon={<CloseIcon />} onPress={onClose} />
-        </Dialog.Title>
-        <div className="page-content py-4">
-          <Tab.Group>
-            <Tab.List className="flex w-fit flex-row items-center rounded border border-faded text-sm shadow-sm">
-              <Tab className="border-r border-faded p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
-                Quick Add
-              </Tab>
-              <Tab
-                disabled
-                className="border-r border-faded p-4 text-faded ui-selected:bg-indigo-100 md:px-2 md:py-1"
-              >
-                Plain Text
-              </Tab>
-              <Tab
-                disabled
-                className="p-4 text-faded ui-selected:bg-indigo-100 md:px-2 md:py-1"
-              >
-                Import File
-              </Tab>
-            </Tab.List>
-            <Tab.Panels className="py-2">
-              <Tab.Panel>
-                <CreateSingleThingForm />
-              </Tab.Panel>
-              <Tab.Panel>Plain text input</Tab.Panel>
-              <Tab.Panel>Import from file</Tab.Panel>
-            </Tab.Panels>
-          </Tab.Group>
-        </div>
-      </Dialog.Panel>
-    </div>
-  </Dialog>
+  <Modal isOpen={isOpen} onClose={onClose} title="Add things to inventory">
+    <Tab.Group>
+      <Tab.List className="flex w-fit flex-row items-center rounded border border-faded text-sm shadow-sm">
+        <Tab className="border-r border-faded p-4 ui-selected:bg-indigo-100 md:px-2 md:py-1">
+          Quick Add
+        </Tab>
+        <Tab
+          disabled
+          className="border-r border-faded p-4 text-faded ui-selected:bg-indigo-100 md:px-2 md:py-1"
+        >
+          Plain Text
+        </Tab>
+        <Tab
+          disabled
+          className="p-4 text-faded ui-selected:bg-indigo-100 md:px-2 md:py-1"
+        >
+          Import File
+        </Tab>
+      </Tab.List>
+      <Tab.Panels className="py-2">
+        <Tab.Panel>
+          <CreateSingleThingForm />
+        </Tab.Panel>
+        <Tab.Panel>Plain text input</Tab.Panel>
+        <Tab.Panel>Import from file</Tab.Panel>
+      </Tab.Panels>
+    </Tab.Group>
+  </Modal>
 );

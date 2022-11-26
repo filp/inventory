@@ -2266,11 +2266,6 @@ react-dropzone@^14.2.3:
     file-selector "^0.6.0"
     prop-types "^15.8.1"
 
-react-grid-gallery@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-grid-gallery/-/react-grid-gallery-1.0.0.tgz#31604b9488dfa75a899aa39bc8884138f0409a12"
-  integrity sha512-S1gr6WXBlPFVrE0x2BHuu7jhyaB61mabcMQyx+8KCgAyKzGza0WF67AfAnS9Q00aurFEq4IP8eqb2Bk5F4RAmQ==
-
 react-hook-form@^7.39.1:
   version "7.39.1"
   resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.39.1.tgz"
