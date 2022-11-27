@@ -256,8 +256,6 @@ const CollectionPage = () => {
   });
 
   const onKbdNavigateRow = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
-
     const nextTarget = ((e.key === 'ArrowUp' &&
       e.currentTarget.previousElementSibling) ||
       (e.key === 'ArrowDown' && e.currentTarget.nextElementSibling)) as

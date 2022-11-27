@@ -5,9 +5,9 @@ import type { AppType } from 'next/app';
 import { trpc } from '@lib/trpc';
 import { CurrentCollectionSelector } from '@components/Collections/CollectionSelector';
 import { Toaster } from '@components/Toaster';
-import { Button, IconButton } from '@components/Button';
+import { Button } from '@components/Button';
 import { CreateThingsModal } from '@components/Things/CreateThingsModal';
-import { CogIcon } from '@components/Icons/CogIcon';
+import { CommandPanel } from '@components/CommandPanel';
 
 const InventoryApp: AppType = ({ Component, pageProps }) => {
   const [createThingsModalIsOpen, setCreateThingsModalIsOpen] = useState(false);
@@ -26,7 +26,7 @@ const InventoryApp: AppType = ({ Component, pageProps }) => {
             <Button onPress={() => setCreateThingsModalIsOpen(true)}>
               Add things
             </Button>
-            <IconButton icon={<CogIcon />} />
+            <CommandPanel />
           </div>
         </header>
 
