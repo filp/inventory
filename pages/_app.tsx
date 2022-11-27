@@ -1,5 +1,5 @@
 import '../styles/globals.css';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Head from 'next/head';
 import type { AppType } from 'next/app';
 import { trpc } from '@lib/trpc';
@@ -7,10 +7,24 @@ import { CurrentCollectionSelector } from '@components/Collections/CollectionSel
 import { Toaster } from '@components/Toaster';
 import { Button } from '@components/Button';
 import { CreateThingsModal } from '@components/Things/CreateThingsModal';
-import { CommandPanel } from '@components/CommandPanel';
+import { CommandPanel, type Command } from '@components/CommandPanel';
+import { ArrowLongRight } from '@components/Icons/ArrowLongRight';
 
 const InventoryApp: AppType = ({ Component, pageProps }) => {
   const [createThingsModalIsOpen, setCreateThingsModalIsOpen] = useState(false);
+  const commands = useMemo<Command[]>(
+    () => [
+      {
+        title: 'Add things',
+        icon: <ArrowLongRight />,
+        execute: (command, query) => {
+          console.log('exec', command, query);
+          setCreateThingsModalIsOpen(true);
+        },
+      },
+    ],
+    []
+  );
 
   return (
     <>
@@ -26,7 +40,7 @@ const InventoryApp: AppType = ({ Component, pageProps }) => {
             <Button onPress={() => setCreateThingsModalIsOpen(true)}>
               Add things
             </Button>
-            <CommandPanel />
+            <CommandPanel commands={commands} />
           </div>
         </header>
 

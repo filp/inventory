@@ -3,7 +3,14 @@ import { IconButton } from './Button';
 import { CogIcon } from './Icons/CogIcon';
 import { Modal } from './Modal';
 
-export const CommandPanel = () => {
+export type Command = {
+  icon: JSX.Element;
+  title: string;
+  hints?: string[];
+  execute: (command: Command, query: string) => void;
+};
+
+export const CommandPanel = ({ commands }: { commands: Command[] }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
@@ -36,9 +43,21 @@ export const CommandPanel = () => {
             placeholder="Start typing to search commands"
             className="w-full rounded-lg py-2 px-4 text-xl outline-none"
           />
-          <div className="border-t border-faded py-2 px-4">
-            Command suggestion goes here
-          </div>
+          <ul className="border-t border-faded py-2 px-4">
+            {commands.map((command, i) => (
+              <li
+                key={i}
+                className="flex flex-row items-center gap-2 border-b-faded"
+                onClick={() => {
+                  setIsOpen(false);
+                  command.execute(command, '');
+                }}
+              >
+                <span className="text-gray-400">{command.icon}</span>{' '}
+                {command.title}
+              </li>
+            ))}
+          </ul>
         </div>
       </Modal>
     </>
